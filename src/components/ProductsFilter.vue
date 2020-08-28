@@ -36,17 +36,13 @@
 
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
-        <BaseColorList
-          :colors="filterColors"
-          :color-group-name="radioGroupName"
-          :color.sync="currentColor"
-        />
+        <BaseColorList :colors="listOfColors" :color.sync="currentColor" />
       </fieldset>
 
       <fieldset class="form__block">
         <legend class="form__legend">Объемб в ГБ</legend>
         <ul class="check-list">
-          <li class="check-list__item" v-for="memory in filterMemory" :key="memory.id">
+          <li class="check-list__item" v-for="memory in listOfMemories" :key="memory.id">
             <label class="check-list__label">
               <input
                 class="check-list__check sr-only"
@@ -57,7 +53,7 @@
               />
               <span class="check-list__desc">
                 {{memory.value}}
-                <span>({{getProductsEqualMemory(memory.value)}})</span>
+                <span>({{memory.numOfProducts}})</span>
               </span>
             </label>
           </li>
@@ -76,9 +72,6 @@
 
 <script>
 import categories from "../data/categories";
-import filterColors from "../data/filterColors";
-import filterMemory from "../data/filterMemory";
-import products from "../data/products";
 import BaseColorList from "./BaseColorList";
 
 export default {
@@ -106,13 +99,13 @@ export default {
       type: Array,
       required: true,
     },
+    listOfColors: Array,
+    listOfMemories: Array,
   },
   components: { BaseColorList },
 
   data() {
     return {
-      radioGroupName: "filterColors",
-
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
@@ -124,12 +117,6 @@ export default {
   computed: {
     categories() {
       return categories;
-    },
-    filterColors() {
-      return filterColors;
-    },
-    filterMemory() {
-      return filterMemory;
     },
     products() {
       return products;
@@ -168,19 +155,6 @@ export default {
       this.$emit("update:categoryId", 0);
       this.$emit("update:color", "");
       this.$emit("update:memory", []);
-    },
-    getProductsEqualMemory(val) {
-      let filteredNum = 0;
-
-      for (let product of this.products) {
-        if (!product.hasOwnProperty("memorySizes")) continue;
-
-        product.memorySizes.forEach((size) => {
-          size.value === val ? (filteredNum += 1) : false;
-        });
-      }
-
-      return filteredNum;
     },
   },
 };

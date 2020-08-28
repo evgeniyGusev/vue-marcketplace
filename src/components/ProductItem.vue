@@ -4,7 +4,7 @@
       <img :src="product.image" srcset="img/radio@2x.jpg 2x" :alt="product.title" />
     </a>
 
-    <div class="catalog__info" v-if="product.image !== 'img/not-found.png'">
+    <div class="catalog__info">
       <h3 class="catalog__title">
         <a href="#">{{product.title}}</a>
       </h3>
@@ -19,7 +19,7 @@
         </li>
       </ul>
 
-      <BaseColorList :colors="product.colors" :color-group-name="product.title" :color="baseColor" />
+      <BaseColorList :colors="product.colors" :color.sync="baseColor" />
     </div>
   </li>
 </template>
@@ -30,21 +30,16 @@ import BaseColorList from "./BaseColorList";
 export default {
   name: "ProductItem",
   props: {
-    product: {
-      type: Object,
-      required: true,
-    },
+    product: Object,
   },
   components: {
     BaseColorList,
   },
 
-  computed: {
-    baseColor() {
-      let color = this.product.colors.filter((item) => item.checked);
-
-      return color[0].value;
-    },
+  data() {
+    return {
+      baseColor: this.product.colors[0].value,
+    };
   },
 };
 </script>
@@ -130,7 +125,7 @@ export default {
   content: "";
   position: absolute;
   left: 0;
-  top: 0;
+  bottom: 0;
   width: 100%;
   height: 3px;
   border-radius: 3px;

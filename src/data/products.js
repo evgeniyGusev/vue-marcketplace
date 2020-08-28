@@ -1,5 +1,36 @@
 export default [
   {
+    id: 2,
+    categoryId: 1,
+    title: 'Беспроводная аудио система Harman/Kardon',
+    price: 11990,
+    image: 'img/audioharman.jpg',
+    colors: [
+      {
+        id: 1,
+        value: "#FFF",
+        checked: true,
+      },
+      {
+        id: 2,
+        value: "#222",
+        checked: false,
+      },
+    ],
+    memorySizes: [
+      {
+        id: 1,
+        value: 32,
+        checked: false
+      },
+      {
+        id: 2,
+        value: 64,
+        checked: false
+      },
+    ],
+  },
+  {
     id: 1,
     categoryId: 1,
     title: 'Беспроводная аудио система Yamaha MusicCast 50 Birch',
@@ -39,37 +70,6 @@ export default [
         checked: false
       },
     ]
-  },
-  {
-    id: 2,
-    categoryId: 1,
-    title: 'Беспроводная аудио система Harman/Kardon',
-    price: 11990,
-    image: 'img/audioharman.jpg',
-    colors: [
-      {
-        id: 1,
-        value: "#FFF",
-        checked: true,
-      },
-      {
-        id: 2,
-        value: "#222",
-        checked: false,
-      },
-    ],
-    memorySizes: [
-      {
-        id: 1,
-        value: 32,
-        checked: false
-      },
-      {
-        id: 2,
-        value: 64,
-        checked: false
-      },
-    ],
   },
   {
     id: 3,
@@ -435,6 +435,11 @@ export default [
       {
         id: 2,
         value: "#222",
+        checked: false,
+      },
+      {
+        id: 3,
+        value: "#e625a5",
         checked: false,
       },
     ],

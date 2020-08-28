@@ -6,6 +6,8 @@
       :category-id.sync="filterCategoryId"
       :color.sync="filterColor"
       :memory.sync="filterMemory"
+      :listOfColors="productsColorList"
+      :listOfMemories="productsMemoryList"
     />
     <main class="catalog__main">
       <h2 v-if="filteredProducts.length === 0">Товар не найден</h2>
@@ -35,6 +37,9 @@ export default {
 
       page: 1,
       productsPerPage: 3,
+
+      productsMemoryList: this.getListFromProductsKey("memorySizes"),
+      productsColorList: this.getListFromProductsKey("colors"),
     };
   },
 
@@ -90,14 +95,53 @@ export default {
 
       return filteredProducts;
     },
-
     products() {
       const offset = (this.page - 1) * this.productsPerPage;
       return this.filteredProducts.slice(offset, offset + this.productsPerPage);
     },
-
     countProducts() {
       return this.filteredProducts.length;
+    },
+  },
+
+  methods: {
+    getListFromProductsKey(key) {
+      let filteredArr = new Set();
+
+      if (key === "memorySizes") {
+        let productsCount = {};
+
+        for (let product of products) {
+          if (!product.hasOwnProperty("memorySizes")) continue;
+
+          product[key].forEach((item) => {
+            filteredArr.add(item.value);
+
+            if (productsCount.hasOwnProperty(item.value)) {
+              productsCount[item.value] = productsCount[item.value] + 1;
+            } else {
+              productsCount[item.value] = 1;
+            }
+          });
+        }
+
+        return [...filteredArr].map((el, i) => {
+          return {
+            id: i + 1,
+            value: el,
+            checked: false,
+            numOfProducts: productsCount[el],
+          };
+        });
+      }
+
+      for (let product of products) {
+        product[key].forEach((item) => filteredArr.add(item.value));
+      }
+
+      return [...filteredArr].map((el, i) => {
+        return { id: i + 1, value: el, checked: false };
+      });
     },
   },
 };

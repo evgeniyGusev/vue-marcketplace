@@ -7,7 +7,6 @@
           class="colors__radio sr-only"
           type="radio"
           :value="color.value"
-          :name="colorGroupName"
         />
         <span class="colors__value" :style="{backgroundColor: color.value}"></span>
       </label>
@@ -22,9 +21,6 @@ export default {
     colors: {
       type: Array,
       required: true,
-    },
-    colorGroupName: {
-      required: false,
     },
     color: {
       required: false,
