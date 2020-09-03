@@ -16,6 +16,8 @@
     "sass": "^1.26.10",
     "sass-loader": "^9.0.3",
     "vue-fragment": "^1.5.1",
-    "vue-template-compiler": "^2.6.11"
+    "vue-router": "^3.4.3",
+    "vue-template-compiler": "^2.6.11",
+    "vuex": "^3.5.1"
   }
 }

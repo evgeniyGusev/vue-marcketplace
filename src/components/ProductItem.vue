@@ -1,24 +1,22 @@
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
-      <img :src="product.image" srcset="img/radio@2x.jpg 2x" :alt="product.title" />
+    <a class="catalog__pic" href="#" @click.prevent="gotoPage('product', {id: product.id})">
+      <img :src="product.image" :alt="product.title" />
     </a>
 
     <div class="catalog__info">
       <h3 class="catalog__title">
         <a href="#">{{product.title}}</a>
       </h3>
-      <span class="catalog__price">{{product.price}}</span>
+      <span class="catalog__price">{{formatPrice}}</span>
 
-      <ul v-if="product.hasOwnProperty('memorySizes')" class="memory-list">
-        <li v-for="memory in product.memorySizes" :key="memory.id" class="memory-list__item">
-          <label class="memory-list__label">
-            <input type="radio" :value="memory.value" :name="product.id" class="memory-list__input" />
-            <span class="memory-list__text">{{memory.value + ' gb'}}</span>
-          </label>
-        </li>
-      </ul>
-
+      <div class="memory-list" v-if="product.hasOwnProperty('memorySizes')">
+        <span
+          class="memory-list__item"
+          v-for="memory in product.memorySizes"
+          :key="memory.id"
+        >{{memory.value}} Gb</span>
+      </div>
       <BaseColorList :colors="product.colors" :color.sync="baseColor" />
     </div>
   </li>
@@ -26,6 +24,8 @@
 
 <script>
 import BaseColorList from "./BaseColorList";
+import gotoPage from "@/helpers/gotoPage";
+import numberFormat from "@/helpers/numberFormat";
 
 export default {
   name: "ProductItem",
@@ -40,6 +40,14 @@ export default {
     return {
       baseColor: this.product.colors[0].value,
     };
+  },
+  computed: {
+    formatPrice() {
+      return numberFormat(this.product.price);
+    },
+  },
+  methods: {
+    gotoPage,
   },
 };
 </script>
@@ -99,43 +107,16 @@ export default {
   font-weight: 500;
 }
 .memory-list {
-  list-style-type: none;
   margin: 0 0 10px 0;
   padding: 5px 0;
 }
 .memory-list__item {
-  display: inline-block;
+  font-weight: 500;
+  border: 1px solid #444;
+  padding: 3px;
+  border-radius: 3px;
 }
 .memory-list__item:not(:last-child) {
   margin-right: 10px;
-}
-.memory-list__input {
-  display: none;
-}
-.memory-list__label {
-  padding: 3px;
-  border: 1px solid #000;
-  border-radius: 3px;
-  font-weight: 500;
-  background-color: #fff;
-  position: relative;
-  cursor: pointer;
-}
-.memory-list__text::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  border-radius: 3px;
-  background-color: #fff;
-  opacity: 0;
-  transition: all 0.3s;
-}
-.memory-list__input:checked + .memory-list__text::before {
-  background-color: rgb(80, 199, 44);
-  opacity: 1;
-  transition: all 0.3s;
 }
 </style>
