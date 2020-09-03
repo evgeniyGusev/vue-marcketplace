@@ -1,5 +1,9 @@
 export default [
   {
+    id: 0,
+    title: 'Все товары'
+  },
+  {
     id: 1,
     title: 'Аудиосистемы'
   },

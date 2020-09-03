@@ -24,7 +24,6 @@
             name="category"
             v-model.number="currentCategoryId"
           >
-            <option value="0">Все категории</option>
             <option
               v-for="category in categories"
               :value="category.id"
@@ -117,9 +116,6 @@ export default {
   computed: {
     categories() {
       return categories;
-    },
-    products() {
-      return products;
     },
   },
 

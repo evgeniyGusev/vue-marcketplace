@@ -2,7 +2,8 @@
   <fragment>
     <section class="content__top content__top--catalog">
       <h1 class="content__title">Каталог</h1>
-      <span class="content__info">Всего товаров: {{ products.length }}</span>
+      <span class="content__info">Всего товаров: {{ filteredProducts.length }}</span>
+      <span class="content__info">Категория: {{ filteredCategory.title}}</span>
     </section>
     <section class="catalog">
       <ProductsFilter
@@ -26,6 +27,7 @@
 <script>
 import Vue from "vue";
 import products from "@/data/products";
+import categories from "@/data/categories";
 import ProductList from "@/components/ProductList";
 import BasePagination from "@/components/BasePagination";
 import ProductsFilter from "@/components/ProductsFilter";
@@ -49,7 +51,7 @@ export default {
       filterMemory: [],
 
       page: 1,
-      productsPerPage: 3,
+      productsPerPage: 6,
 
       productsMemoryList: this.getListFromProductsKey("memorySizes"),
       productsColorList: this.getListFromProductsKey("colors"),
@@ -110,6 +112,11 @@ export default {
     },
     products() {
       return products;
+    },
+    filteredCategory() {
+      return categories.find(
+        (category) => category.id === this.filterCategoryId
+      );
     },
     productsOnPage() {
       const offset = (this.page - 1) * this.productsPerPage;
@@ -174,6 +181,10 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+.content__info {
+  display: block;
+  margin-bottom: 5px;
 }
 </style>
   

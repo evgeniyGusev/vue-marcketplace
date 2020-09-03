@@ -123,7 +123,7 @@
                   type="button"
                   aria-label="Добавить один товар"
                   @click="chengeQuantity(checkedQuantity + 1)"
-                  :disabled="checkedQuantity >= product.inStock"
+                  :disabled="checkedQuantity === product.inStock"
                 >
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-plus" />
