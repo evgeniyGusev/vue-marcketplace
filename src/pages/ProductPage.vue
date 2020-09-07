@@ -131,6 +131,8 @@
                 </button>
               </div>
 
+              <BaseValidationError v-if="validationError" />
+
               <button class="button button--primery" type="submit">В корзину</button>
             </div>
           </form>
@@ -159,11 +161,15 @@
 <script>
 import products from "@/data/products";
 import categories from "@/data/categories";
+
 import ProductAboutTab from "@/components/ProductPageComponents/ProductAboutTab";
 import ProductSpecTab from "@/components/ProductPageComponents/ProductSpecTab";
 import ProductGuarantTab from "@/components/ProductPageComponents/ProductGuarantTab";
 import ProductDeliveryTab from "@/components/ProductPageComponents/ProductDeliveryTab";
+
 import BaseColorList from "@/components/BaseColorList";
+import BaseValidationError from "@/components/BaseValidationError";
+
 import gotoPage from "@/helpers/gotoPage";
 import numberFormat from "@/helpers/numberFormat";
 
@@ -185,6 +191,7 @@ export default {
       checkedMemory: null,
       checkedQuantity: 1,
       activeTab: "ProductAboutTab",
+      validationError: false,
     };
   },
   computed: {
@@ -223,13 +230,22 @@ export default {
       : false;
   },
   beforeUpdate() {
-    this.checkedQuantity > this.product.inStock
-      ? (this.checkedQuantity = this.product.inStock)
-      : false;
+    if (this.checkedQuantity > this.product.inStock) {
+      this.checkedQuantity = this.product.inStock;
+      this.validationError = true;
+    } else if (!this.checkedQuantity || this.checkedQuantity === "-") {
+      this.checkedQuantity = 1;
+      this.validationError = true;
+    }
+  },
+
+  updated() {
+    setTimeout(() => (this.validationError = false), 3000);
   },
 
   components: {
     BaseColorList,
+    BaseValidationError,
     ProductAboutTab,
     ProductSpecTab,
     ProductGuarantTab,

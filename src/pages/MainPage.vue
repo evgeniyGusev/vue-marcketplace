@@ -1,9 +1,14 @@
 <template>
   <fragment>
     <section class="content__top content__top--catalog">
-      <h1 class="content__title">Каталог</h1>
+      <a
+        class="breadcrumbs__link breadcrumbs__link--arrow"
+        href="index.html"
+        v-if="filterCategoryId"
+      >&#129028;Вернуться в каталог</a>
+      <h1 class="content__title" v-if="!filterCategoryId">Каталог</h1>
+      <h1 class="content__title" v-else>{{ filteredCategory.title}}</h1>
       <span class="content__info">Всего товаров: {{ filteredProducts.length }}</span>
-      <span class="content__info">Категория: {{ filteredCategory.title}}</span>
     </section>
     <section class="catalog">
       <ProductsFilter
@@ -185,6 +190,9 @@ export default {
 .content__info {
   display: block;
   margin-bottom: 5px;
+}
+.breadcrumbs__link--arrow {
+  align-self: flex-start;
 }
 </style>
   

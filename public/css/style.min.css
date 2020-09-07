@@ -229,16 +229,19 @@ a {
 }
 
 .content__top--catalog {
-  margin-left: 310px;
-  text-align: center
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
+
+.breadcrumbs__link--arrow {}
 
 .content__breadcrumbs {
   margin-bottom: 10px
 }
 
 .content__title {
-  margin: 10px 0;
   font-family: "PressStart";
   font-size: 25px;
   line-height: 35px;
@@ -400,7 +403,7 @@ a {
   display: flex;
   width: 150px;
   height: 70px;
-  background-color: #fff
+  background-color: #fff;
 }
 
 .form__counter button,
@@ -1054,7 +1057,9 @@ a {
 .item__row {
   display: grid;
   grid-template-columns: 150px 224px;
-  grid-gap: 15px
+  grid-gap: 15px;
+
+  position: relative;
 }
 
 .item__desc {

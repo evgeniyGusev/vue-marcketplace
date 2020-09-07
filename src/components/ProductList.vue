@@ -26,7 +26,7 @@ export default {
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(3, 270px);
+  grid-template-columns: repeat(3, 31%);
   grid-gap: 65px 30px;
   margin: 0 0 70px;
 }
