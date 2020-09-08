@@ -130,8 +130,9 @@
                   </svg>
                 </button>
               </div>
-
-              <BaseValidationError v-if="validationError" />
+              <transition name="fade">
+                <BaseValidationError v-show="validationError" />
+              </transition>
 
               <button class="button button--primery" type="submit">В корзину</button>
             </div>
@@ -218,8 +219,13 @@ export default {
   },
   methods: {
     gotoPage,
+
     chengeQuantity(val) {
       this.checkedQuantity = val;
+    },
+
+    clearValidationError() {
+      setTimeout(() => (this.validationError = false), 3000);
     },
   },
 
@@ -229,7 +235,9 @@ export default {
       ? (this.checkedMemory = this.baseMemory)
       : false;
   },
+
   beforeUpdate() {
+    console.log(1);
     if (this.checkedQuantity > this.product.inStock) {
       this.checkedQuantity = this.product.inStock;
       this.validationError = true;
@@ -240,7 +248,8 @@ export default {
   },
 
   updated() {
-    setTimeout(() => (this.validationError = false), 3000);
+    console.log(2);
+    this.validationError ? this.clearValidationError() : false;
   },
 
   components: {
@@ -257,5 +266,12 @@ export default {
 <style>
 .numcontroll-btn {
   cursor: pointer;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
 }
 </style>
