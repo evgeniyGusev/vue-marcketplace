@@ -108,7 +108,7 @@
                   class="numcontroll-btn"
                   type="button"
                   aria-label="Убрать один товар"
-                  @click="chengeQuantity(checkedQuantity - 1)"
+                  @click="chengedQuantity = checkedQuantity - 1"
                   :disabled="checkedQuantity === 1"
                 >
                   <svg width="12" height="12" fill="currentColor">
@@ -122,7 +122,7 @@
                   class="numcontroll-btn"
                   type="button"
                   aria-label="Добавить один товар"
-                  @click="chengeQuantity(checkedQuantity + 1)"
+                  @click="chengedQuantity = checkedQuantity + 1"
                   :disabled="checkedQuantity === product.inStock"
                 >
                   <svg width="12" height="12" fill="currentColor">
@@ -188,10 +188,10 @@ export default {
   },
   data() {
     return {
+      activeTab: "ProductAboutTab",
       checkedColor: null,
       checkedMemory: null,
       checkedQuantity: 1,
-      activeTab: "ProductAboutTab",
       validationError: false,
     };
   },
@@ -216,13 +216,21 @@ export default {
     formatPrice() {
       return numberFormat(this.product.price);
     },
+    chengedQuantity: {
+      get() {
+        return this.checkedQuantity;
+      },
+      set(value) {
+        return (this.checkedQuantity = value);
+      },
+    },
   },
   methods: {
     gotoPage,
 
-    chengeQuantity(val) {
-      this.checkedQuantity = val;
-    },
+    // chengeQuantity(val) {
+    //   this.checkedQuantity = val;
+    // },
 
     clearValidationError() {
       setTimeout(() => (this.validationError = false), 3000);
@@ -237,18 +245,16 @@ export default {
   },
 
   beforeUpdate() {
-    console.log(1);
     if (this.checkedQuantity > this.product.inStock) {
       this.checkedQuantity = this.product.inStock;
       this.validationError = true;
-    } else if (!this.checkedQuantity || this.checkedQuantity === "-") {
+    } else if (this.checkedQuantity <= 0) {
       this.checkedQuantity = 1;
       this.validationError = true;
     }
   },
 
   updated() {
-    console.log(2);
     this.validationError ? this.clearValidationError() : false;
   },
 
