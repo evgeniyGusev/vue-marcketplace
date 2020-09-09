@@ -76,7 +76,7 @@
         <h2 class="item__title">{{product.title}}</h2>
         <div class="item__form">
           <form class="form" action="#" method="POST">
-            <b class="item__price">{{formatPrice}} ₽</b>
+            <b class="item__price">{{product.price | formatPrice}} ₽</b>
 
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
@@ -108,7 +108,7 @@
                   class="numcontroll-btn"
                   type="button"
                   aria-label="Убрать один товар"
-                  @click="chengedQuantity = checkedQuantity - 1"
+                  @click="checkedQuantity = checkedQuantity - 1"
                   :disabled="checkedQuantity === 1"
                 >
                   <svg width="12" height="12" fill="currentColor">
@@ -116,13 +116,13 @@
                   </svg>
                 </button>
 
-                <input type="text" v-model.number="checkedQuantity" name="count" />
+                <input type="text" v-model.number="changedQuantity" name="count" />
 
                 <button
                   class="numcontroll-btn"
                   type="button"
                   aria-label="Добавить один товар"
-                  @click="chengedQuantity = checkedQuantity + 1"
+                  @click="checkedQuantity = checkedQuantity + 1"
                   :disabled="checkedQuantity === product.inStock"
                 >
                   <svg width="12" height="12" fill="currentColor">
@@ -195,6 +195,7 @@ export default {
       validationError: false,
     };
   },
+
   computed: {
     product() {
       return products.find((product) => product.id === this.pageParams.id);
@@ -213,27 +214,35 @@ export default {
     baseMemory() {
       return this.product.memorySizes[0].value;
     },
-    formatPrice() {
-      return numberFormat(this.product.price);
-    },
-    chengedQuantity: {
+    changedQuantity: {
       get() {
         return this.checkedQuantity;
       },
       set(value) {
-        return (this.checkedQuantity = value);
+        if (value > this.product.inStock) {
+          this.checkedQuantity = this.product.inStock;
+          this.validationError = true;
+          this.removeValidationError();
+        } else if (value <= 0 || isNaN(value)) {
+          this.checkedQuantity = 1;
+          this.validationError = true;
+          this.removeValidationError();
+        }
       },
     },
   },
+
   methods: {
     gotoPage,
 
-    // chengeQuantity(val) {
-    //   this.checkedQuantity = val;
-    // },
-
-    clearValidationError() {
+    removeValidationError() {
       setTimeout(() => (this.validationError = false), 3000);
+    },
+  },
+
+  filters: {
+    formatPrice(val) {
+      return isNaN(val) ? "Информация недоступна" : numberFormat(val);
     },
   },
 
@@ -242,20 +251,6 @@ export default {
     this.product.hasOwnProperty("memorySizes")
       ? (this.checkedMemory = this.baseMemory)
       : false;
-  },
-
-  beforeUpdate() {
-    if (this.checkedQuantity > this.product.inStock) {
-      this.checkedQuantity = this.product.inStock;
-      this.validationError = true;
-    } else if (this.checkedQuantity <= 0) {
-      this.checkedQuantity = 1;
-      this.validationError = true;
-    }
-  },
-
-  updated() {
-    this.validationError ? this.clearValidationError() : false;
   },
 
   components: {

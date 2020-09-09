@@ -8,9 +8,9 @@
       <h3 class="catalog__title">
         <a href="#">{{product.title}}</a>
       </h3>
-      <span class="catalog__price">{{formatPrice}}</span>
+      <span class="catalog__price">{{product.price | formatPrice}}</span>
 
-      <div class="memory-list" v-if="product.hasOwnProperty('memorySizes')">
+      <div class="memory-list" v-if="product.memorySizes">
         <span
           class="memory-list__item"
           v-for="memory in product.memorySizes"
@@ -32,6 +32,7 @@ export default {
   props: {
     product: Object,
   },
+
   components: {
     BaseColorList,
   },
@@ -41,13 +42,15 @@ export default {
       baseColor: this.product.colors[0].value,
     };
   },
-  computed: {
-    formatPrice() {
-      return numberFormat(this.product.price);
-    },
-  },
+
   methods: {
     gotoPage,
+  },
+
+  filters: {
+    formatPrice(val) {
+      return isNaN(val) ? "Информация недоступна" : numberFormat(val);
+    },
   },
 };
 </script>

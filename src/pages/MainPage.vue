@@ -37,6 +37,7 @@ import ProductList from "@/components/ProductList";
 import BasePagination from "@/components/BasePagination";
 import ProductsFilter from "@/components/ProductsFilter";
 import { Plugin } from "vue-fragment";
+import { getProductsMemories, getProductsColors } from "@/helpers/utils";
 
 Vue.use(Plugin);
 
@@ -58,8 +59,8 @@ export default {
       page: 1,
       productsPerPage: 6,
 
-      productsMemoryList: this.getListFromProductsKey("memorySizes"),
-      productsColorList: this.getListFromProductsKey("colors"),
+      productsMemoryList: getProductsMemories(products),
+      productsColorList: getProductsColors(products),
     };
   },
 
@@ -101,7 +102,7 @@ export default {
         let filteredArr = [];
 
         for (let product of filteredProducts) {
-          if (!product.hasOwnProperty("memorySizes")) continue;
+          if (!product.memorySizes) continue;
 
           product.memorySizes.forEach((memory) => {
             if (this.filterMemory.includes(memory.value)) {
@@ -129,47 +130,6 @@ export default {
     },
     countProducts() {
       return this.filteredProducts.length;
-    },
-  },
-
-  methods: {
-    getListFromProductsKey(key) {
-      let filteredArr = new Set();
-
-      if (key === "memorySizes") {
-        let productsCount = {};
-
-        for (let product of products) {
-          if (!product.hasOwnProperty("memorySizes")) continue;
-
-          product[key].forEach((item) => {
-            filteredArr.add(item.value);
-
-            if (productsCount.hasOwnProperty(item.value)) {
-              productsCount[item.value] = productsCount[item.value] + 1;
-            } else {
-              productsCount[item.value] = 1;
-            }
-          });
-        }
-
-        return [...filteredArr].map((el, i) => {
-          return {
-            id: i + 1,
-            value: el,
-            checked: false,
-            numOfProducts: productsCount[el],
-          };
-        });
-      }
-
-      for (let product of products) {
-        product[key].forEach((item) => filteredArr.add(item.value));
-      }
-
-      return [...filteredArr].map((el, i) => {
-        return { id: i + 1, value: el, checked: false };
-      });
     },
   },
 };
