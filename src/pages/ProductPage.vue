@@ -172,7 +172,7 @@ import BaseColorList from "@/components/BaseColorList";
 import BaseValidationError from "@/components/BaseValidationError";
 
 import gotoPage from "@/helpers/gotoPage";
-import numberFormat from "@/helpers/numberFormat";
+import { formatPrice } from "@/filters/filtersMixins";
 
 const tabs = [
   { id: 1, title: "Описание", tab: "ProductAboutTab" },
@@ -186,6 +186,9 @@ export default {
   props: {
     pageParams: Object,
   },
+
+  mixins: [formatPrice],
+
   data() {
     return {
       activeTab: "ProductAboutTab",
@@ -237,12 +240,6 @@ export default {
 
     removeValidationError() {
       setTimeout(() => (this.validationError = false), 3000);
-    },
-  },
-
-  filters: {
-    formatPrice(val) {
-      return isNaN(val) ? "Информация недоступна" : numberFormat(val);
     },
   },
 

@@ -25,13 +25,15 @@
 <script>
 import BaseColorList from "./BaseColorList";
 import gotoPage from "@/helpers/gotoPage";
-import numberFormat from "@/helpers/numberFormat";
+import { formatPrice } from "@/filters/filtersMixins";
 
 export default {
   name: "ProductItem",
   props: {
     product: Object,
   },
+
+  mixins: [formatPrice],
 
   components: {
     BaseColorList,
@@ -45,12 +47,6 @@ export default {
 
   methods: {
     gotoPage,
-  },
-
-  filters: {
-    formatPrice(val) {
-      return isNaN(val) ? "Информация недоступна" : numberFormat(val);
-    },
   },
 };
 </script>
