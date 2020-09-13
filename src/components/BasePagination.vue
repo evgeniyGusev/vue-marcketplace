@@ -7,11 +7,7 @@
         aria-label="Предыдущая страница"
         :disabled="page === 1"
         @click.prevent="paginate(page - 1)"
-      >
-        <svg width="8" height="14" fill="currentColor">
-          <use xlink:href="#icon-arrow-left" />
-        </svg>
-      </button>
+      >&#8249;</button>
     </li>
 
     <li class="pagination__item" v-for="pageNumber in pages" :key="pageNumber">
@@ -30,11 +26,7 @@
         aria-label="Следующая страница"
         :disabled="page === pages"
         @click.prevent="paginate(page + 1)"
-      >
-        <svg width="8" height="14" fill="currentColor">
-          <use xlink:href="#icon-arrow-right" />
-        </svg>
-      </button>
+      >&#8250;</button>
     </li>
   </ul>
 </template>
@@ -123,6 +115,8 @@ export default {
 }
 .pagination__link--arrow {
   border: 1px solid #e2e2e2;
+  padding: 5px;
+  font-size: 24px;
 }
 .pagination__link--arrow:disabled {
   cursor: not-allowed;

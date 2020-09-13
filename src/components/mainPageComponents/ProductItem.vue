@@ -1,14 +1,14 @@
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#" @click.prevent="gotoPage('product', {id: product.id})">
+    <router-link class="catalog__pic" :to="{name: 'product', params: {id: product.id}}">
       <img :src="product.image" :alt="product.title" />
-    </a>
+    </router-link>
 
     <div class="catalog__info">
       <h3 class="catalog__title">
-        <a href="#">{{product.title}}</a>
+        <router-link :to="{name: 'product', params: {id: product.id}}">{{product.title}}</router-link>
       </h3>
-      <span class="catalog__price">{{product.price | formatPrice}}</span>
+      <span class="catalog__price">{{numberFormat(product.price)}}</span>
 
       <div class="memory-list" v-if="product.memorySizes">
         <span
@@ -23,17 +23,13 @@
 </template>
 
 <script>
-import BaseColorList from "./BaseColorList";
-import gotoPage from "@/helpers/gotoPage";
-import { formatPrice } from "@/filters/filtersMixins";
+import BaseColorList from "@/components/BaseColorList";
 
 export default {
   name: "ProductItem",
   props: {
     product: Object,
   },
-
-  mixins: [formatPrice],
 
   components: {
     BaseColorList,
@@ -43,10 +39,6 @@ export default {
     return {
       baseColor: this.product.colors[0].value,
     };
-  },
-
-  methods: {
-    gotoPage,
   },
 };
 </script>

@@ -1,31 +1,27 @@
 <template>
   <fragment>
-    <section class="content__top content__top--catalog">
-      <a
-        class="breadcrumbs__link breadcrumbs__link--arrow"
-        href="index.html"
-        v-if="filterCategoryId"
-      >&#129028;Вернуться в каталог</a>
-      <h1 class="content__title" v-if="!filterCategoryId">Каталог</h1>
-      <h1 class="content__title" v-else>{{ filteredCategory.title}}</h1>
-      <span class="content__info">Всего товаров: {{ filteredProducts.length }}</span>
-    </section>
-    <section class="catalog">
-      <ProductsFilter
-        :price-from.sync="filterPriceFrom"
-        :price-to.sync="filterPriceTo"
-        :category-id.sync="filterCategoryId"
-        :color.sync="filterColor"
-        :memory.sync="filterMemory"
-        :listOfColors="productsColorList"
-        :listOfMemories="productsMemoryList"
-      />
-      <main class="catalog__main">
-        <h2 v-if="filteredProducts.length === 0">Товар не найден</h2>
-        <ProductList :products="productsOnPage" />
-        <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage" />
-      </main>
-    </section>
+    <main class="catalog container">
+      <section class="content__top content__top--catalog">
+        <h1 class="content__title">Каталог</h1>
+        <span class="content__info">Всего товаров: {{ numberFormat(filteredProducts.length) }}</span>
+      </section>
+      <section class="catalog__content">
+        <ProductsFilter
+          :price-from.sync="filterPriceFrom"
+          :price-to.sync="filterPriceTo"
+          :category-id.sync="filterCategoryId"
+          :color.sync="filterColor"
+          :memory.sync="filterMemory"
+          :listOfColors="productsColorList"
+          :listOfMemories="productsMemoryList"
+        />
+        <main class="catalog__main">
+          <h2 v-if="filteredProducts.length === 0">Товар не найден</h2>
+          <ProductList :products="productsOnPage" />
+          <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage" />
+        </main>
+      </section>
+    </main>
   </fragment>
 </template>
 
@@ -33,9 +29,11 @@
 import Vue from "vue";
 import products from "@/data/products";
 import categories from "@/data/categories";
-import ProductList from "@/components/ProductList";
+
+import ProductList from "@/components/mainPageComponents/ProductList";
 import BasePagination from "@/components/BasePagination";
-import ProductsFilter from "@/components/ProductsFilter";
+import ProductsFilter from "@/components/mainPageComponents/ProductsFilter";
+
 import { Plugin } from "vue-fragment";
 import { getProductsMemories, getProductsColors } from "@/helpers/utils";
 
@@ -52,7 +50,7 @@ export default {
     return {
       filterPriceFrom: 0,
       filterPriceTo: 0,
-      filterCategoryId: this.pageParams.id || 0,
+      filterCategoryId: 0,
       filterColor: "",
       filterMemory: [],
 
@@ -119,11 +117,6 @@ export default {
     products() {
       return products;
     },
-    filteredCategory() {
-      return categories.find(
-        (category) => category.id === this.filterCategoryId
-      );
-    },
     productsOnPage() {
       const offset = (this.page - 1) * this.productsPerPage;
       return this.filteredProducts.slice(offset, offset + this.productsPerPage);
@@ -138,8 +131,14 @@ export default {
 <style>
 .catalog {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
+  margin-bottom: 50px;
+}
+.catalog__content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 .catalog__main {
   padding: 0 20px;

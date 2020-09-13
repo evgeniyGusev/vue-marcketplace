@@ -70,8 +70,8 @@
 </template>
 
 <script>
-import categories from "../data/categories";
-import BaseColorList from "./BaseColorList";
+import categories from "@/data/categories";
+import BaseColorList from "@/components/BaseColorList";
 
 export default {
   name: "ProductsFilter",
