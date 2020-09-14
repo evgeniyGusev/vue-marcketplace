@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="header__wrapper container">
-      <span>Каталог</span>
+      <span class="header__info">Каталог</span>
 
       <router-link :to="{name: 'main'}">
         <img
@@ -14,17 +14,20 @@
 
       <a class="header__tel" href="tel:8 800 600 90 09">8 800 600 90 09</a>
 
-      <router-link :to="{name: 'cart'}" class="header__cart" aria-label="Корзина с товарами">
+      <BaseCartIndicator v-slot="{ count }" class="header__cart" aria-label="Корзина с товарами">
         &#128722;
-        <span class="header__count" aria-label="Количество товаров">3</span>
-      </router-link>
+        <span class="header__count" aria-label="Количество товаров">{{ count }}</span>
+      </BaseCartIndicator>
     </div>
   </header>
 </template>
 
 <script>
+import BaseCartIndicator from "@/components/BaseCartIndicator";
+
 export default {
   name: "MainHeader",
+  components: { BaseCartIndicator },
 };
 </script>
 

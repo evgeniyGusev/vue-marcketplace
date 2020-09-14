@@ -107,11 +107,7 @@
                     aria-label="Убрать один товар"
                     @click="checkedQuantity = checkedQuantity - 1"
                     :disabled="checkedQuantity === 1"
-                  >
-                    <svg width="12" height="12" fill="currentColor">
-                      <use xlink:href="#icon-minus" />
-                    </svg>
-                  </button>
+                  >&#8249;</button>
 
                   <input type="text" v-model.number="changedQuantity" name="count" />
 
@@ -121,11 +117,7 @@
                     aria-label="Добавить один товар"
                     @click="checkedQuantity = checkedQuantity + 1"
                     :disabled="checkedQuantity === product.inStock"
-                  >
-                    <svg width="12" height="12" fill="currentColor">
-                      <use xlink:href="#icon-plus" />
-                    </svg>
-                  </button>
+                  >&#8250;</button>
                 </div>
                 <transition name="fade">
                   <BaseValidationError v-show="validationError" />
