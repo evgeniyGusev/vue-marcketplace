@@ -5,13 +5,15 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "BaseCartIndicator",
 
   computed: {
-    count() {
-      return this.$store.getters.productsInCartLength;
-    },
+    ...mapGetters({
+      count: "productsInCartLength",
+    }),
   },
 };
 </script>
