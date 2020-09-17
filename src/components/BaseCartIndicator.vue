@@ -8,10 +8,10 @@
 export default {
   name: "BaseCartIndicator",
 
-  data() {
-    return {
-      count: 10,
-    };
+  computed: {
+    count() {
+      return this.$store.getters.productsInCartLength;
+    },
   },
 };
 </script>

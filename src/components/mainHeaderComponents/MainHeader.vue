@@ -14,6 +14,10 @@
 
       <a class="header__tel" href="tel:8 800 600 90 09">8 800 600 90 09</a>
 
+      <!-- 
+        We need to get the "count" field from the slot to display the quantity of products.
+        Otherwise, it's just a link to the cart
+      -->
       <BaseCartIndicator v-slot="{ count }" class="header__cart" aria-label="Корзина с товарами">
         &#128722;
         <span class="header__count" aria-label="Количество товаров">{{ count }}</span>

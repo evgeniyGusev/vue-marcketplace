@@ -72,7 +72,7 @@
           <span class="item__code">Артикул: {{product.id}}</span>
           <h2 class="item__title">{{product.title}}</h2>
           <div class="item__form">
-            <form class="form" action="#" method="POST">
+            <form class="form" @submit.prevent="addProductToCart">
               <b class="item__price">{{numberFormat(product.price)}} ₽</b>
 
               <fieldset class="form__block">
@@ -100,28 +100,11 @@
               </fieldset>
 
               <div class="item__row">
-                <div class="form__counter">
-                  <button
-                    class="numcontroll-btn"
-                    type="button"
-                    aria-label="Убрать один товар"
-                    @click="checkedQuantity = checkedQuantity - 1"
-                    :disabled="checkedQuantity === 1"
-                  >&#8249;</button>
-
-                  <input type="text" v-model.number="changedQuantity" name="count" />
-
-                  <button
-                    class="numcontroll-btn"
-                    type="button"
-                    aria-label="Добавить один товар"
-                    @click="checkedQuantity = checkedQuantity + 1"
-                    :disabled="checkedQuantity === product.inStock"
-                  >&#8250;</button>
-                </div>
-                <transition name="fade">
-                  <BaseValidationError v-show="validationError" />
-                </transition>
+                <BaseProductCounter
+                  :amount.sync="checkedQuantity"
+                  :maxCount="product.inStock"
+                  class="form__counter"
+                />
 
                 <button class="button button--primery" type="submit">В корзину</button>
               </div>
@@ -161,9 +144,9 @@ import ProductAboutTab from "@/components/productPageComponents/ProductAboutTab"
 import ProductSpecTab from "@/components/productPageComponents/ProductSpecTab";
 import ProductGuarantTab from "@/components/productPageComponents/ProductGuarantTab";
 import ProductDeliveryTab from "@/components/productPageComponents/ProductDeliveryTab";
+import BaseProductCounter from "@/components/BaseProductCounter";
 
 import BaseColorList from "@/components/BaseColorList";
-import BaseValidationError from "@/components/BaseValidationError";
 
 const tabs = [
   { id: 1, title: "Описание", tab: "ProductAboutTab" },
@@ -181,7 +164,6 @@ export default {
       checkedColor: null,
       checkedMemory: null,
       checkedQuantity: 1,
-      validationError: false,
     };
   },
 
@@ -203,27 +185,16 @@ export default {
     baseMemory() {
       return this.product.memorySizes[0].value;
     },
-    changedQuantity: {
-      get() {
-        return this.checkedQuantity;
-      },
-      set(value) {
-        if (value > this.product.inStock) {
-          this.checkedQuantity = this.product.inStock;
-          this.validationError = true;
-          this.removeValidationError();
-        } else if (value <= 0 || isNaN(value)) {
-          this.checkedQuantity = 1;
-          this.validationError = true;
-          this.removeValidationError();
-        }
-      },
-    },
   },
 
   methods: {
-    removeValidationError() {
-      setTimeout(() => (this.validationError = false), 3000);
+    addProductToCart() {
+      this.$store.commit("ADD_PRODUCT_TO_CART", {
+        productId: this.product.id,
+        amount: this.checkedQuantity,
+        color: this.checkedColor,
+        memory: this.checkedMemory,
+      });
     },
   },
 
@@ -236,11 +207,11 @@ export default {
 
   components: {
     BaseColorList,
-    BaseValidationError,
     ProductAboutTab,
     ProductSpecTab,
     ProductGuarantTab,
     ProductDeliveryTab,
+    BaseProductCounter,
   },
 };
 </script>
