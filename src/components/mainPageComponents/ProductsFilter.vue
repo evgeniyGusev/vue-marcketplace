@@ -151,6 +151,12 @@ export default {
       this.$emit("update:categoryId", 0);
       this.$emit("update:color", "");
       this.$emit("update:memory", []);
+
+      this.currentPriceFrom = 0;
+      this.currentPriceTo = 0;
+      this.currentCategoryId = 0;
+      this.currentColor = "";
+      this.currentMemory = [];
     },
   },
 };

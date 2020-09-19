@@ -81,7 +81,7 @@
                 <BaseColorList :colors="product.colors" :color.sync="checkedColor" />
               </fieldset>
 
-              <fieldset class="form__block" v-if="product.hasOwnProperty('memorySizes')">
+              <fieldset class="form__block" v-if="product.memorySizes">
                 <legend class="form__legend">Объемб в ГБ:</legend>
                 <ul class="sizes sizes--primery">
                   <li v-for="memory in product.memorySizes" :key="memory.id" class="sizes__item">
@@ -169,7 +169,15 @@ export default {
 
   computed: {
     product() {
-      return products.find((product) => product.id === +this.$route.params.id);
+      let product = products.find(
+        (product) => product.id === +this.$route.params.id
+      );
+
+      if (!product) {
+        this.$router.push({ name: "notFoundPage" });
+      } else {
+        return product;
+      }
     },
     category() {
       return categories.find(

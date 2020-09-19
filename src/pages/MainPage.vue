@@ -7,9 +7,9 @@
       </section>
       <section class="catalog__content">
         <ProductsFilter
-          :price-from.sync="filterPriceFrom"
-          :price-to.sync="filterPriceTo"
-          :category-id.sync="filterCategoryId"
+          :priceFrom.sync="filterPriceFrom"
+          :priceTo.sync="filterPriceTo"
+          :categoryId.sync="filterCategoryId"
           :color.sync="filterColor"
           :memory.sync="filterMemory"
           :listOfColors="productsColorList"
@@ -34,10 +34,7 @@ import ProductList from "@/components/mainPageComponents/ProductList";
 import BasePagination from "@/components/BasePagination";
 import ProductsFilter from "@/components/mainPageComponents/ProductsFilter";
 
-import { Plugin } from "vue-fragment";
 import { getProductsMemories, getProductsColors } from "@/helpers/utils";
-
-Vue.use(Plugin);
 
 export default {
   name: "MainPage",

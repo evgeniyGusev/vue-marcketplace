@@ -1,10 +1,13 @@
 <template>
   <li class="cart__item product">
-    <div class="product__pic">
+    <router-link :to="{name: 'product', params: {id: item.productId}}" class="product__pic">
       <img :src="item.product.image" width="120" height="120" :alt="item.product.title" />
-    </div>
+    </router-link>
     <div>
-      <h3 class="product__title">{{item.product.title}}</h3>
+      <h3 class="product__title">
+        <router-link :to="{name: 'product', params: {id: item.productId}}">{{item.product.title}}</router-link>
+      </h3>
+
       <p class="product__info" v-if="item.memory">
         Объем:
         <span>{{item.memory}} Gb</span>
@@ -55,7 +58,7 @@ export default {
         return this.item.amount;
       },
       set(value) {
-        this.$store.commit("UPDATE_PRODUCT_AMOUNT", {
+        this.updateAmount({
           productId: this.item.productId,
           amount: value,
         });
@@ -66,6 +69,7 @@ export default {
   methods: {
     ...mapMutations({
       deleteProduct: "DELETE_CART_PRODUCT",
+      updateAmount: "UPDATE_PRODUCT_AMOUNT",
     }),
   },
 };
