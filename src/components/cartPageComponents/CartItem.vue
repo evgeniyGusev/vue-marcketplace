@@ -4,9 +4,7 @@
       <img :src="item.product.image" width="120" height="120" :alt="item.product.title" />
     </router-link>
     <div>
-      <h3 class="product__title">
-        <router-link :to="{name: 'product', params: {id: item.productId}}">{{item.product.title}}</router-link>
-      </h3>
+      <h3 class="product__title">{{item.product.title}}</h3>
 
       <p class="product__info" v-if="item.memory">
         Объем:

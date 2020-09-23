@@ -10,7 +10,9 @@ import Vue from "vue";
 import { Plugin } from "vue-fragment";
 Vue.use(Plugin);
 
-export default {};
+export default {
+  name: "NotFoundPage",
+};
 </script>
 
 <style scoped>

@@ -169,27 +169,23 @@ export default {
 
   computed: {
     product() {
-      let product = products.find(
-        (product) => product.id === +this.$route.params.id
-      );
-
-      if (!product) {
-        this.$router.push({ name: "notFoundPage" });
-      } else {
-        return product;
-      }
+      return products.find((product) => product.id === +this.$route.params.id);
     },
+
     category() {
       return categories.find(
         (category) => category.id === this.product.categoryId
       );
     },
+
     tabs() {
       return tabs;
     },
+
     baseColor() {
       return this.product.colors[0].value;
     },
+
     baseMemory() {
       return this.product.memorySizes[0].value;
     },
@@ -203,6 +199,16 @@ export default {
         color: this.checkedColor,
         memory: this.checkedMemory,
       });
+    },
+  },
+
+  watch: {
+    $route(to, from) {
+      let product = products.find((el) => el.id === to.params.id);
+
+      if (!product) {
+        this.$router.replace({ name: "notFoundPage" });
+      }
     },
   },
 

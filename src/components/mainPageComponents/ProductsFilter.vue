@@ -119,24 +119,6 @@ export default {
     },
   },
 
-  watch: {
-    priceFrom(value) {
-      this.currentPriceFrom = value;
-    },
-    priceTo(value) {
-      this.currentPriceTo = value;
-    },
-    categoryId(value) {
-      this.currentCategoryId = value;
-    },
-    color(value) {
-      this.currentColor = value;
-    },
-    memory(value) {
-      this.currentMemory = value;
-    },
-  },
-
   methods: {
     filterSubmit() {
       this.$emit("update:priceFrom", this.currentPriceFrom);

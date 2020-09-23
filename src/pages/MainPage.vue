@@ -7,11 +7,7 @@
       </section>
       <section class="catalog__content">
         <ProductsFilter
-          :priceFrom.sync="filterPriceFrom"
-          :priceTo.sync="filterPriceTo"
-          :categoryId.sync="filterCategoryId"
-          :color.sync="filterColor"
-          :memory.sync="filterMemory"
+          v-bind.sync="filters"
           :listOfColors="productsColorList"
           :listOfMemories="productsMemoryList"
         />
@@ -45,11 +41,13 @@ export default {
 
   data() {
     return {
-      filterPriceFrom: 0,
-      filterPriceTo: 0,
-      filterCategoryId: 0,
-      filterColor: "",
-      filterMemory: [],
+      filters: {
+        priceFrom: 0,
+        priceTo: 0,
+        categoryId: 0,
+        color: "",
+        memory: [],
+      },
 
       page: 1,
       productsPerPage: 6,
@@ -63,44 +61,46 @@ export default {
     filteredProducts() {
       let filteredProducts = products;
 
-      if (this.filterPriceFrom) {
+      if (this.filters.priceFrom) {
         filteredProducts = filteredProducts.filter(
           (product) => product.price > this.filterPriceFrom
         );
       }
 
-      if (this.filterPriceTo) {
+      if (this.filters.priceTo) {
         filteredProducts = filteredProducts.filter(
           (product) => product.price < this.filterPriceTo
         );
       }
 
-      if (this.filterCategoryId) {
+      if (this.filters.categoryId) {
         filteredProducts = filteredProducts.filter(
           (product) => product.categoryId === this.filterCategoryId
         );
       }
 
-      if (this.filterColor) {
+      if (this.filters.color) {
         let filteredArr = [];
 
         for (let product of filteredProducts) {
           product.colors.forEach((color) =>
-            color.value === this.filterColor ? filteredArr.push(product) : false
+            color.value === this.filters.color
+              ? filteredArr.push(product)
+              : false
           );
         }
 
         filteredProducts = filteredArr;
       }
 
-      if (this.filterMemory.length !== 0) {
+      if (this.filters.memory.length !== 0) {
         let filteredArr = [];
 
         for (let product of filteredProducts) {
           if (!product.memorySizes) continue;
 
           product.memorySizes.forEach((memory) => {
-            if (this.filterMemory.includes(memory.value)) {
+            if (this.filters.memory.includes(memory.value)) {
               filteredArr.includes(product) ? false : filteredArr.push(product);
             }
           });
