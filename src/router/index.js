@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import products from '@/data/products';
 
 import MainPage from '@/pages/MainPage';
 import ProductPage from '@/pages/ProductPage';
@@ -19,15 +18,6 @@ const routes = [
     name: 'product',
     component: ProductPage,
     path: '/product/:id',
-    beforeEnter(to, from, next) {
-      let product = products.find(el => el.id === to.params.id);
-
-      if (!product) {
-        next({ name: 'notFoundPage' })
-      } else {
-        next()
-      }
-    }
   },
   {
     name: 'cart',
@@ -42,7 +32,6 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  mode: 'history',
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

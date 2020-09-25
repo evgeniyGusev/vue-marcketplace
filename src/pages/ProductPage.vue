@@ -1,16 +1,20 @@
 <template>
   <fragment>
-    <main class="content container">
+    <main class="content container" v-if="product">
       <div class="content__top">
         <ul class="breadcrumbs">
           <li class="breadcrumbs__item">
-            <router-link class="breadcrumbs__link" :to="{name: 'main'}">Каталог</router-link>
+            <router-link class="breadcrumbs__link" :to="{ name: 'main' }"
+              >Каталог</router-link
+            >
           </li>
           <li class="breadcrumbs__item">
-            <router-link class="breadcrumbs__link" :to="{name: 'main'}">{{category.title}}</router-link>
+            <router-link class="breadcrumbs__link" :to="{ name: 'main' }">{{
+              category.title
+            }}</router-link>
           </li>
           <li class="breadcrumbs__item">
-            <a class="breadcrumbs__link">{{product.title}}</a>
+            <a class="breadcrumbs__link">{{ product.title }}</a>
           </li>
         </ul>
       </div>
@@ -18,7 +22,12 @@
       <section class="item">
         <div class="item__pics pics">
           <div class="pics__wrapper">
-            <img width="570" height="570" :src="product.image" :alt="product.title" />
+            <img
+              width="570"
+              height="570"
+              :src="product.image"
+              :alt="product.title"
+            />
           </div>
           <!-- <ul class="pics__list">
           <li class="pics__item">
@@ -69,22 +78,29 @@
         </div>
 
         <div class="item__info">
-          <span class="item__code">Артикул: {{product.id}}</span>
-          <h2 class="item__title">{{product.title}}</h2>
+          <span class="item__code">Артикул: {{ product.id }}</span>
+          <h2 class="item__title">{{ product.title }}</h2>
           <div class="item__form">
             <form class="form" @submit.prevent="addProductToCart">
-              <b class="item__price">{{numberFormat(product.price)}} ₽</b>
+              <b class="item__price">{{ numberFormat(product.price) }} ₽</b>
 
               <fieldset class="form__block">
                 <legend class="form__legend">Цвет:</legend>
 
-                <BaseColorList :colors="product.colors" :color.sync="checkedColor" />
+                <BaseColorList
+                  :colors="product.colors"
+                  :color.sync="checkedColor"
+                />
               </fieldset>
 
               <fieldset class="form__block" v-if="product.memorySizes">
                 <legend class="form__legend">Объемб в ГБ:</legend>
                 <ul class="sizes sizes--primery">
-                  <li v-for="memory in product.memorySizes" :key="memory.id" class="sizes__item">
+                  <li
+                    v-for="memory in product.memorySizes"
+                    :key="memory.id"
+                    class="sizes__item"
+                  >
                     <label class="sizes__label">
                       <input
                         type="radio"
@@ -93,7 +109,9 @@
                         class="sizes__radio sr-only"
                         v-model="checkedMemory"
                       />
-                      <span class="sizes__value">{{memory.value + ' gb'}}</span>
+                      <span class="sizes__value">{{
+                        memory.value + " gb"
+                      }}</span>
                     </label>
                   </li>
                 </ul>
@@ -106,7 +124,9 @@
                   class="form__counter"
                 />
 
-                <button class="button button--primery" type="submit">В корзину</button>
+                <button class="button button--primery" type="submit">
+                  В корзину
+                </button>
               </div>
             </form>
           </div>
@@ -116,10 +136,14 @@
           <ul class="tabs">
             <li class="tabs__item" v-for="tab of tabs" :key="tab.id">
               <a
-                :class="['tabs__link', {'tabs__link--current': activeTab === tab.tab}]"
+                :class="[
+                  'tabs__link',
+                  { 'tabs__link--current': activeTab === tab.tab },
+                ]"
                 href="#"
                 @click.prevent="activeTab = tab.tab"
-              >{{tab.title}}</a>
+                >{{ tab.title }}</a
+              >
             </li>
           </ul>
 
@@ -127,7 +151,7 @@
             <component
               :is="activeTab"
               :product="product"
-              @change-tab="(value) => activeTab = value"
+              @change-tab="(value) => (activeTab = value)"
             />
           </div>
         </div>
@@ -203,10 +227,8 @@ export default {
   },
 
   watch: {
-    $route(to, from) {
-      let product = products.find((el) => el.id === to.params.id);
-
-      if (!product) {
+    "$route.params.id"() {
+      if (!this.product) {
         this.$router.replace({ name: "notFoundPage" });
       }
     },
