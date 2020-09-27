@@ -1,35 +1,47 @@
 <template>
   <fragment>
-    <main class="content container" v-if="product">
-      <div class="content__top">
-        <ul class="breadcrumbs">
-          <li class="breadcrumbs__item">
-            <router-link class="breadcrumbs__link" :to="{ name: 'main' }"
-              >Каталог</router-link
-            >
-          </li>
-          <li class="breadcrumbs__item">
-            <router-link class="breadcrumbs__link" :to="{ name: 'main' }">{{
-              category.title
-            }}</router-link>
-          </li>
-          <li class="breadcrumbs__item">
-            <a class="breadcrumbs__link">{{ product.title }}</a>
-          </li>
-        </ul>
-      </div>
+    <main class="content container" v-if="isProductLoading">
+      <BaseLoaderSpinner />
+    </main>
 
-      <section class="item">
-        <div class="item__pics pics">
-          <div class="pics__wrapper">
-            <img
-              width="570"
-              height="570"
-              :src="product.image"
-              :alt="product.title"
-            />
-          </div>
-          <!-- <ul class="pics__list">
+    <main class="content container" v-else-if="isProductLoadFailed">
+      <div>
+        Не удалось загрузить товар...
+        <button @click="loadProduct">Попробовать снова</button>
+      </div>
+    </main>
+
+    <main class="content container" v-else>
+      <div>
+        <div class="content__top">
+          <ul class="breadcrumbs">
+            <li class="breadcrumbs__item">
+              <router-link class="breadcrumbs__link" :to="{ name: 'main' }"
+                >Каталог</router-link
+              >
+            </li>
+            <li class="breadcrumbs__item">
+              <router-link class="breadcrumbs__link" :to="{ name: 'main' }">{{
+                category.title
+              }}</router-link>
+            </li>
+            <li class="breadcrumbs__item">
+              <a class="breadcrumbs__link">{{ product.title }}</a>
+            </li>
+          </ul>
+        </div>
+
+        <section class="item">
+          <div class="item__pics pics">
+            <div class="pics__wrapper">
+              <img
+                width="570"
+                height="570"
+                :src="product.image"
+                :alt="product.title"
+              />
+            </div>
+            <!-- <ul class="pics__list">
           <li class="pics__item">
             <a href class="pics__link pics__link--current">
               <img
@@ -75,25 +87,25 @@
             </a>
           </li>
           </ul>-->
-        </div>
+          </div>
 
-        <div class="item__info">
-          <span class="item__code">Артикул: {{ product.id }}</span>
-          <h2 class="item__title">{{ product.title }}</h2>
-          <div class="item__form">
-            <form class="form" @submit.prevent="addProductToCart">
-              <b class="item__price">{{ numberFormat(product.price) }} ₽</b>
+          <div class="item__info">
+            <span class="item__code">Артикул: {{ product.id }}</span>
+            <h2 class="item__title">{{ product.title }}</h2>
+            <div class="item__form">
+              <form class="form" @submit.prevent="addProductToCart">
+                <b class="item__price">{{ numberFormat(product.price) }} ₽</b>
 
-              <fieldset class="form__block">
-                <legend class="form__legend">Цвет:</legend>
+                <fieldset class="form__block">
+                  <legend class="form__legend">Цвет:</legend>
 
-                <BaseColorList
-                  :colors="product.colors"
-                  :color.sync="checkedColor"
-                />
-              </fieldset>
+                  <BaseColorList
+                    :colors="product.colors"
+                    :colorId.sync="checkedColorId"
+                  />
+                </fieldset>
 
-              <fieldset class="form__block" v-if="product.memorySizes">
+                <!-- <fieldset class="form__block" v-if="product.memorySizes">
                 <legend class="form__legend">Объемб в ГБ:</legend>
                 <ul class="sizes sizes--primery">
                   <li
@@ -115,62 +127,75 @@
                     </label>
                   </li>
                 </ul>
-              </fieldset>
+              </fieldset> -->
 
-              <div class="item__row">
-                <BaseProductCounter
-                  :amount.sync="checkedQuantity"
-                  :maxCount="product.inStock"
-                  class="form__counter"
-                />
+                <div class="item__row">
+                  <BaseProductCounter
+                    :amount.sync="checkedQuantity"
+                    :maxCount="product.inStock"
+                    class="form__counter"
+                  />
 
-                <button class="button button--primery" type="submit">
-                  В корзину
-                </button>
-              </div>
-            </form>
+                  <button
+                    class="button button--primery"
+                    type="submit"
+                    :disabled="isProductAddLoading"
+                  >
+                    {{ isProductAddFailed ? "Попробовать снова" : "Добавить" }}
+                  </button>
+
+                  <div v-show="isProductAddLoading">Добавляем товар...</div>
+                  <div v-show="isProductAddToCart">Товар добавлен</div>
+                  <div v-show="isProductAddFailed">
+                    Не удалось добавить товар. Повторите попытку
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
 
-        <div class="item__desc">
-          <ul class="tabs">
-            <li class="tabs__item" v-for="tab of tabs" :key="tab.id">
-              <a
-                :class="[
-                  'tabs__link',
-                  { 'tabs__link--current': activeTab === tab.tab },
-                ]"
-                href="#"
-                @click.prevent="activeTab = tab.tab"
-                >{{ tab.title }}</a
-              >
-            </li>
-          </ul>
+          <div class="item__desc">
+            <ul class="tabs">
+              <li class="tabs__item" v-for="tab of tabs" :key="tab.id">
+                <a
+                  :class="[
+                    'tabs__link',
+                    { 'tabs__link--current': activeTab === tab.tab },
+                  ]"
+                  href="#"
+                  @click.prevent="activeTab = tab.tab"
+                  >{{ tab.title }}</a
+                >
+              </li>
+            </ul>
 
-          <div class="item__content">
-            <component
-              :is="activeTab"
-              :product="product"
-              @change-tab="(value) => (activeTab = value)"
-            />
+            <div class="item__content">
+              <component
+                :is="activeTab"
+                :product="product"
+                @change-tab="(value) => (activeTab = value)"
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   </fragment>
 </template>
 
 <script>
-import products from "@/data/products";
-import categories from "@/data/categories";
-
 import ProductAboutTab from "@/components/productPageComponents/ProductAboutTab";
 import ProductSpecTab from "@/components/productPageComponents/ProductSpecTab";
 import ProductGuarantTab from "@/components/productPageComponents/ProductGuarantTab";
 import ProductDeliveryTab from "@/components/productPageComponents/ProductDeliveryTab";
-import BaseProductCounter from "@/components/BaseProductCounter";
 
+import BaseProductCounter from "@/components/BaseProductCounter";
 import BaseColorList from "@/components/BaseColorList";
+import BaseLoaderSpinner from "@/components/BaseLoaderSpinner";
+import { BASE_API_URL } from "@/config";
+import { mapActions } from "vuex";
+
+import axios from "axios";
 
 const tabs = [
   { id: 1, title: "Описание", tab: "ProductAboutTab" },
@@ -185,21 +210,27 @@ export default {
   data() {
     return {
       activeTab: "ProductAboutTab",
-      checkedColor: null,
-      checkedMemory: null,
+      checkedColorId: 0,
       checkedQuantity: 1,
+
+      productData: null,
+
+      isProductLoading: false,
+      isProductLoadFailed: false,
+
+      isProductAddLoading: false,
+      isProductAddToCart: false,
+      isProductAddFailed: false,
     };
   },
 
   computed: {
     product() {
-      return products.find((product) => product.id === +this.$route.params.id);
+      return this.productData ? this.productData : {};
     },
 
     category() {
-      return categories.find(
-        (category) => category.id === this.product.categoryId
-      );
+      return this.productData ? this.productData.category : {};
     },
 
     tabs() {
@@ -207,38 +238,78 @@ export default {
     },
 
     baseColor() {
-      return this.product.colors[0].value;
-    },
-
-    baseMemory() {
-      return this.product.memorySizes[0].value;
+      return this.product.colors[0].id;
     },
   },
 
   methods: {
+    ...mapActions({
+      addProduct: "addProduct",
+    }),
+
     addProductToCart() {
-      this.$store.commit("ADD_PRODUCT_TO_CART", {
+      this.isProductAddLoading = true;
+      this.isProductAddToCart = false;
+      this.isProductAddFailed = false;
+
+      this.addProduct({
         productId: this.product.id,
         amount: this.checkedQuantity,
-        color: this.checkedColor,
-        memory: this.checkedMemory,
-      });
+        colorId: this.checkedColorId,
+      })
+        .then(() => {
+          this.isProductAddLoading = false;
+          this.isProductAddToCart = true;
+          setTimeout(() => (this.isProductAddToCart = false), 2000);
+        })
+        .catch(() => (this.isProductAddFailed = true))
+        .then(() => {
+          this.isProductAddLoading = false;
+          this.isProductAddToCart = false;
+        });
+    },
+
+    loadProduct() {
+      this.isProductLoading = true;
+      this.isProductLoadFailed = false;
+
+      return axios
+        .get(BASE_API_URL + "products/" + this.$route.params.id)
+        .then(
+          (response) =>
+            (this.productData = {
+              ...response.data,
+              image: response.data.image.file.url,
+              inStock: ~~((Math.random() + 0.1) * 10),
+              description: "Здесь должно быть описание",
+              specifications: [
+                {
+                  id: 1,
+                  title: "Характеристика",
+                  description: "Описание",
+                  onAboutTab: true,
+                },
+              ],
+            })
+        )
+        .catch((error) => {
+          if (error.response.status === 404) {
+            this.$router.replace({ name: "notFoundPage" });
+          } else {
+            this.isProductLoadFailed = true;
+          }
+        })
+        .finally(() => (this.isProductLoading = false));
     },
   },
 
   watch: {
-    "$route.params.id"() {
-      if (!this.product) {
-        this.$router.replace({ name: "notFoundPage" });
-      }
+    "$route.params.id": {
+      handler() {
+        this.loadProduct();
+      },
+      immediate: true,
     },
-  },
-
-  created() {
-    this.checkedColor = this.baseColor;
-    this.product.hasOwnProperty("memorySizes")
-      ? (this.checkedMemory = this.baseMemory)
-      : false;
   },
 
   components: {
@@ -248,6 +319,7 @@ export default {
     ProductGuarantTab,
     ProductDeliveryTab,
     BaseProductCounter,
+    BaseLoaderSpinner,
   },
 };
 </script>

@@ -6,9 +6,12 @@
           v-model="checkedColor"
           class="colors__radio sr-only"
           type="radio"
-          :value="color.value"
+          :value="color.id"
         />
-        <span class="colors__value" :style="{backgroundColor: color.value}"></span>
+        <span
+          class="colors__value"
+          :style="{ backgroundColor: color.code }"
+        ></span>
       </label>
     </li>
   </ul>
@@ -22,7 +25,7 @@ export default {
       type: Array,
       required: true,
     },
-    color: {
+    colorId: {
       required: false,
     },
   },
@@ -30,11 +33,11 @@ export default {
   computed: {
     checkedColor: {
       get() {
-        return this.color;
+        return this.colorId;
       },
 
       set(val) {
-        this.$emit("update:color", val);
+        this.$emit("update:colorId", val);
       },
     },
   },

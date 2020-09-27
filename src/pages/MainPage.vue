@@ -3,18 +3,49 @@
     <main class="catalog container">
       <section class="content__top content__top--catalog">
         <h1 class="content__title">Каталог</h1>
-        <span class="content__info">Всего товаров: {{ numberFormat(filteredProducts.length) }}</span>
+        <span class="content__info"
+          >Всего товаров: {{ numberFormat(countProducts) }}</span
+        >
       </section>
+
       <section class="catalog__content">
-        <ProductsFilter
-          v-bind.sync="filters"
-          :listOfColors="productsColorList"
-          :listOfMemories="productsMemoryList"
-        />
-        <main class="catalog__main">
-          <h2 v-if="filteredProducts.length === 0">Товар не найден</h2>
-          <ProductList :products="productsOnPage" />
-          <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage" />
+        <ProductsFilter v-bind.sync="filters" />
+
+        <BaseLoaderSpinner v-if="isProductsLoading" />
+        <!-- <div v-if="isProductsLoading">
+          <div class="loader-inner">
+            <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+            </div>
+            <div class="loader-line-wrap">
+              <div class="loader-line"></div>
+            </div>
+          </div>
+        </div> -->
+
+        <div v-else-if="isproductsLoadingFailed">
+          OOOOOPS!!!!!
+          <button @click="loadProducts">Попробовать еще раз</button>
+        </div>
+
+        <main class="catalog__main" v-else>
+          <h2 v-if="!countProducts">Товар не найден</h2>
+          <ProductList v-else :products="products" />
+          <BasePagination
+            v-model="page"
+            :count="countProducts"
+            :per-page="productsPerPage"
+            v-if="countProducts"
+          />
         </main>
       </section>
     </main>
@@ -23,12 +54,14 @@
 
 <script>
 import Vue from "vue";
-import products from "@/data/products";
 import categories from "@/data/categories";
+import axios from "axios";
+import { BASE_API_URL } from "@/config.js";
 
 import ProductList from "@/components/mainPageComponents/ProductList";
 import BasePagination from "@/components/BasePagination";
 import ProductsFilter from "@/components/mainPageComponents/ProductsFilter";
+import BaseLoaderSpinner from "@/components/BaseLoaderSpinner";
 
 import { getProductsMemories, getProductsColors } from "@/helpers/utils";
 
@@ -37,7 +70,12 @@ export default {
   props: {
     pageParams: Object,
   },
-  components: { ProductsFilter, ProductList, BasePagination },
+  components: {
+    ProductsFilter,
+    ProductList,
+    BasePagination,
+    BaseLoaderSpinner,
+  },
 
   data() {
     return {
@@ -45,81 +83,71 @@ export default {
         priceFrom: 0,
         priceTo: 0,
         categoryId: 0,
-        color: "",
-        memory: [],
+        colorId: 0,
       },
+
+      productsData: null,
+      isProductsLoading: false,
+      isproductsLoadingFailed: false,
 
       page: 1,
       productsPerPage: 6,
-
-      productsMemoryList: getProductsMemories(products),
-      productsColorList: getProductsColors(products),
     };
   },
 
   computed: {
-    filteredProducts() {
-      let filteredProducts = products;
-
-      if (this.filters.priceFrom) {
-        filteredProducts = filteredProducts.filter(
-          (product) => product.price > this.filterPriceFrom
-        );
-      }
-
-      if (this.filters.priceTo) {
-        filteredProducts = filteredProducts.filter(
-          (product) => product.price < this.filterPriceTo
-        );
-      }
-
-      if (this.filters.categoryId) {
-        filteredProducts = filteredProducts.filter(
-          (product) => product.categoryId === this.filterCategoryId
-        );
-      }
-
-      if (this.filters.color) {
-        let filteredArr = [];
-
-        for (let product of filteredProducts) {
-          product.colors.forEach((color) =>
-            color.value === this.filters.color
-              ? filteredArr.push(product)
-              : false
-          );
-        }
-
-        filteredProducts = filteredArr;
-      }
-
-      if (this.filters.memory.length !== 0) {
-        let filteredArr = [];
-
-        for (let product of filteredProducts) {
-          if (!product.memorySizes) continue;
-
-          product.memorySizes.forEach((memory) => {
-            if (this.filters.memory.includes(memory.value)) {
-              filteredArr.includes(product) ? false : filteredArr.push(product);
-            }
-          });
-        }
-
-        filteredProducts = filteredArr;
-      }
-
-      return filteredProducts;
-    },
     products() {
-      return products;
-    },
-    productsOnPage() {
-      const offset = (this.page - 1) * this.productsPerPage;
-      return this.filteredProducts.slice(offset, offset + this.productsPerPage);
+      return this.productsData
+        ? this.productsData.items.map((product) => {
+            return {
+              ...product,
+              image: product.image.file.url,
+            };
+          })
+        : [];
     },
     countProducts() {
-      return this.filteredProducts.length;
+      return this.productsData ? this.productsData.pagination.total : 1;
+    },
+  },
+
+  methods: {
+    loadProducts() {
+      this.isProductsLoading = true;
+      this.isproductsLoadingFailed = false;
+      clearTimeout(this.loadProductsTimer);
+
+      // setTimeOut is used here to send just one request with all data
+      this.loadProductsTimer = setTimeout(() => {
+        return axios
+          .get(`${BASE_API_URL}products`, {
+            params: {
+              page: this.page,
+              limit: this.productsPerPage,
+              minPrice: this.filters.priceFrom,
+              maxPrice: this.filters.priceTo,
+              categoryId: this.filters.categoryId,
+              colorId: this.filters.colorId,
+            },
+          })
+          .then((response) => (this.productsData = response.data))
+          .catch(() => (this.isproductsLoadingFailed = true))
+          .finally(() => (this.isProductsLoading = false));
+      }, 0);
+    },
+  },
+
+  watch: {
+    page() {
+      this.loadProducts();
+    },
+
+    filters: {
+      handler() {
+        this.loadProducts();
+      },
+      deep: true,
+      immediate: true,
     },
   },
 };
@@ -135,7 +163,7 @@ export default {
 .catalog__content {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 .catalog__main {
   padding: 0 20px;

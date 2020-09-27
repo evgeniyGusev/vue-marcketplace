@@ -1,23 +1,29 @@
 <template>
   <li class="catalog__item">
-    <router-link class="catalog__pic" :to="{name: 'product', params: {id: product.id}}">
+    <router-link
+      class="catalog__pic"
+      :to="{ name: 'product', params: { id: product.id } }"
+    >
       <img :src="product.image" :alt="product.title" />
     </router-link>
 
     <div class="catalog__info">
       <h3 class="catalog__title">
-        <router-link :to="{name: 'product', params: {id: product.id}}">{{product.title}}</router-link>
+        <router-link :to="{ name: 'product', params: { id: product.id } }">{{
+          product.title
+        }}</router-link>
       </h3>
-      <span class="catalog__price">{{numberFormat(product.price)}}</span>
+      <span class="catalog__price">{{ numberFormat(product.price) }}</span>
 
       <div class="memory-list" v-if="product.memorySizes">
         <span
           class="memory-list__item"
           v-for="memory in product.memorySizes"
           :key="memory.id"
-        >{{memory.value}} Gb</span>
+          >{{ memory.value }} Gb</span
+        >
       </div>
-      <BaseColorList :colors="product.colors" :color.sync="baseColor" />
+      <BaseColorList :colors="product.colors" :colorId.sync="baseColor" />
     </div>
   </li>
 </template>
@@ -37,7 +43,7 @@ export default {
 
   data() {
     return {
-      baseColor: this.product.colors[0].value,
+      baseColor: this.product.colors[0].code,
     };
   },
 };

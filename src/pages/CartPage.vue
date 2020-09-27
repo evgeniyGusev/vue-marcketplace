@@ -7,7 +7,9 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{name: 'main'}">Каталог</router-link>
+          <router-link class="breadcrumbs__link" :to="{ name: 'main' }"
+            >Каталог</router-link
+          >
         </li>
         <li class="breadcrumbs__item">
           <span class="breadcrumbs__link">Корзина</span>
@@ -15,25 +17,33 @@
       </ul>
 
       <h1 class="content__title">Корзина</h1>
-      <span class="content__info">Товаров в корзине: {{cartLength}}</span>
+      <span class="content__info">Товаров в корзине: {{ cartLength }}</span>
     </div>
 
     <section class="cart">
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
-            <CartItem v-for="product in products" :key="product.productId" :item="product" />
+            <CartItem
+              v-for="product in products"
+              :key="product.productId"
+              :item="product"
+            />
           </ul>
         </div>
 
         <div class="cart__block">
-          <p class="cart__desc">Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе</p>
+          <p class="cart__desc">
+            Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
+          </p>
           <p class="cart__price">
             Итого:
-            <span>{{numberFormat(totalPrice)}} ₽</span>
+            <span>{{ numberFormat(totalPrice) }} ₽</span>
           </p>
 
-          <button class="cart__button button button--primery" type="submit">Оформить заказ</button>
+          <button class="cart__button button button--primery" type="submit">
+            Оформить заказ
+          </button>
         </div>
       </form>
     </section>
