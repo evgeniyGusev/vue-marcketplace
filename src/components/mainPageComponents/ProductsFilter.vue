@@ -75,31 +75,6 @@
         </fieldset>
       </div>
 
-      <!-- <fieldset class="form__block">
-        <legend class="form__legend">Объемб в ГБ</legend>
-        <ul class="check-list">
-          <li
-            class="check-list__item"
-            v-for="memory in listOfMemories"
-            :key="memory.id"
-          >
-            <label class="check-list__label">
-              <input
-                class="check-list__check sr-only"
-                type="checkbox"
-                name="volume"
-                :value="memory.value"
-                v-model="currentMemory"
-              />
-              <span class="check-list__desc">
-                {{ memory.value }}
-                <span>({{ memory.numOfProducts }})</span>
-              </span>
-            </label>
-          </li>
-        </ul>
-      </fieldset> -->
-
       <input
         class="filter__submit button button--primery"
         type="submit"
@@ -195,23 +170,11 @@ export default {
     loadFilterData(dataKey, apiKey) {
       this.isLoadFailed[dataKey] = false;
 
-      axios
+      return axios
         .get(`${BASE_API_URL + apiKey}`)
         .then((response) => (this[dataKey] = response.data))
         .catch(() => (this.isLoadFailed[dataKey] = true));
     },
-
-    // loadCategories() {
-    //   axios
-    //     .get(`${BASE_API_URL}productCategories`)
-    //     .then((response) => (this.categoriesData = response.data));
-    // },
-
-    // loadColors() {
-    //   axios
-    //     .get(`${BASE_API_URL}colors`)
-    //     .then((response) => (this.colorsData = response.data));
-    // },
   },
 
   created() {

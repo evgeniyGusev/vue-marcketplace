@@ -12,25 +12,6 @@
         <ProductsFilter v-bind.sync="filters" />
 
         <BaseLoaderSpinner v-if="isProductsLoading" />
-        <!-- <div v-if="isProductsLoading">
-          <div class="loader-inner">
-            <div class="loader-line-wrap">
-              <div class="loader-line"></div>
-            </div>
-            <div class="loader-line-wrap">
-              <div class="loader-line"></div>
-            </div>
-            <div class="loader-line-wrap">
-              <div class="loader-line"></div>
-            </div>
-            <div class="loader-line-wrap">
-              <div class="loader-line"></div>
-            </div>
-            <div class="loader-line-wrap">
-              <div class="loader-line"></div>
-            </div>
-          </div>
-        </div> -->
 
         <div v-else-if="isproductsLoadingFailed">
           OOOOOPS!!!!!
@@ -54,7 +35,6 @@
 
 <script>
 import Vue from "vue";
-import categories from "@/data/categories";
 import axios from "axios";
 import { BASE_API_URL } from "@/config.js";
 
@@ -62,8 +42,6 @@ import ProductList from "@/components/mainPageComponents/ProductList";
 import BasePagination from "@/components/BasePagination";
 import ProductsFilter from "@/components/mainPageComponents/ProductsFilter";
 import BaseLoaderSpinner from "@/components/BaseLoaderSpinner";
-
-import { getProductsMemories, getProductsColors } from "@/helpers/utils";
 
 export default {
   name: "MainPage",
