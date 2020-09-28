@@ -132,11 +132,14 @@ const store = new Vuex.Store({
       context.commit('DELETE_CART_PRODUCT', productId)
 
       return axios
-        .delete(BASE_API_URL + 'baskets/products', {
-          productId,
-
+        .request({
+          url: BASE_API_URL + 'baskets/products',
+          method: 'DELETE',
           params: {
             userAccessKey: context.state.userAccessKey,
+          },
+          data: {
+            productId
           }
         })
         .then(response => {

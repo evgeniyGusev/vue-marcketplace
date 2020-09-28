@@ -141,7 +141,7 @@
                     type="submit"
                     :disabled="isProductAddLoading"
                   >
-                    {{ isProductAddFailed ? "Попробовать снова" : "Добавить" }}
+                    {{ buttonText }}
                   </button>
 
                   <div v-show="isProductAddLoading">Добавляем товар...</div>
@@ -184,6 +184,10 @@
 </template>
 
 <script>
+import axios from "axios";
+import { mapActions } from "vuex";
+import { BASE_API_URL } from "@/config";
+
 import ProductAboutTab from "@/components/productPageComponents/ProductAboutTab";
 import ProductSpecTab from "@/components/productPageComponents/ProductSpecTab";
 import ProductGuarantTab from "@/components/productPageComponents/ProductGuarantTab";
@@ -192,10 +196,6 @@ import ProductDeliveryTab from "@/components/productPageComponents/ProductDelive
 import BaseProductCounter from "@/components/BaseProductCounter";
 import BaseColorList from "@/components/BaseColorList";
 import BaseLoaderSpinner from "@/components/BaseLoaderSpinner";
-import { BASE_API_URL } from "@/config";
-import { mapActions } from "vuex";
-
-import axios from "axios";
 
 const tabs = [
   { id: 1, title: "Описание", tab: "ProductAboutTab" },
@@ -240,6 +240,14 @@ export default {
     baseColor() {
       return this.product.colors[0].id;
     },
+
+    buttonText() {
+      if (this.isProductAddFailed) {
+        return "Еще раз..";
+      } else {
+        return this.isProductAddLoading ? "Подождите..." : "Добавить";
+      }
+    },
   },
 
   methods: {
@@ -252,21 +260,24 @@ export default {
       this.isProductAddToCart = false;
       this.isProductAddFailed = false;
 
-      this.addProduct({
-        productId: this.product.id,
-        amount: this.checkedQuantity,
-        colorId: this.checkedColorId,
-      })
-        .then(() => {
-          this.isProductAddLoading = false;
-          this.isProductAddToCart = true;
-          setTimeout(() => (this.isProductAddToCart = false), 2000);
+      setTimeout(() => {
+        this.addProduct({
+          productId: this.product.id,
+          amount: this.checkedQuantity,
+          colorId: this.checkedColorId,
         })
-        .catch(() => (this.isProductAddFailed = true))
-        .then(() => {
-          this.isProductAddLoading = false;
-          this.isProductAddToCart = false;
-        });
+          .then(() => {
+            this.isProductAddToCart = true;
+            this.isProductAddLoading = false;
+          })
+          .catch(() => (this.isProductAddFailed = true))
+          .finally(() => {
+            this.isProductAddLoading = false;
+            this.isProductAddToCart
+              ? setTimeout(() => (this.isProductAddToCart = false), 2000)
+              : false;
+          });
+      }, 5000);
     },
 
     loadProduct() {
@@ -280,7 +291,6 @@ export default {
             (this.productData = {
               ...response.data,
               image: response.data.image.file.url,
-              inStock: ~~((Math.random() + 0.1) * 10),
               description: "Здесь должно быть описание",
               specifications: [
                 {

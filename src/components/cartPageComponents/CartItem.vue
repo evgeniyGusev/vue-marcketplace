@@ -17,7 +17,7 @@
       <p class="product__info product__info--color">
         Цвет:
         <span>
-          <i :style="{ backgroundColor: item.color }"></i>
+          <i :style="{ backgroundColor: item.colorId }"></i>
         </span>
       </p>
       <span class="product__code">Артикул: {{ item.productId }}</span>
@@ -25,7 +25,6 @@
 
     <BaseProductCounter
       :amount.sync="amount"
-      :maxCount="item.product.inStock"
       class="product__counter form__counter"
     />
 
@@ -39,7 +38,7 @@
       aria-label="Удалить товар из корзины"
       @click="deleteProduct(item.productId)"
     >
-      &#10060;
+      {{ isProductDeleteInProccess ? "sd" : "&#10060;" }}
     </button>
   </li>
 </template>
@@ -56,6 +55,13 @@ export default {
       type: Object,
       required: true,
     },
+  },
+
+  data() {
+    return {
+      isProductDeleteInProccess: false,
+      isProductDeleteError: false,
+    };
   },
 
   computed: {
@@ -75,8 +81,21 @@ export default {
   methods: {
     ...mapActions({
       updateAmount: "updateCartProductAmount",
-      deleteProduct: "deleteProductFromCart",
+      deleteProductFromCart: "deleteProductFromCart",
     }),
+
+    deleteProduct(item) {
+      this.isProductDeleteInProccess = true;
+      this.isProductDeleteError = false;
+
+      this.deleteProductFromCart(item)
+        .catch(() => {
+          this.isProductDeleteError = false;
+        })
+        .finally(() => {
+          this.isProductDeleteInProccess = false;
+        });
+    },
   },
 };
 </script>
