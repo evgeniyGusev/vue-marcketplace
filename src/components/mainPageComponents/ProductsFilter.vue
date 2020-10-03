@@ -105,7 +105,6 @@
 <script>
 import BaseColorList from "@/components/BaseColorList";
 import axios from "axios";
-import { BASE_API_URL } from "@/config.js";
 
 export default {
   name: "ProductsFilter",
@@ -184,7 +183,7 @@ export default {
       this.isLoadFailed[dataKey] = false;
 
       return axios
-        .get(`${BASE_API_URL + apiKey}`)
+        .get(`${apiKey}`)
         .then((response) => (this[dataKey] = response.data))
         .catch(() => (this.isLoadFailed[dataKey] = true));
     },

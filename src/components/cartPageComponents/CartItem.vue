@@ -116,17 +116,17 @@ export default {
       deleteProductFromCart: "deleteProductFromCart",
     }),
 
-    deleteProduct(item) {
+    async deleteProduct(item) {
       this.isProductDeleteInProccess = true;
       this.isProductDeleteError = false;
 
-      this.deleteProductFromCart(item)
-        .catch(() => {
-          this.isProductDeleteError = false;
-        })
-        .finally(() => {
-          this.isProductDeleteInProccess = false;
-        });
+      try {
+        await this.deleteProductFromCart(item);
+      } catch {
+        this.isProductDeleteError = false;
+      }
+
+      this.isProductDeleteInProccess = false;
     },
   },
 };

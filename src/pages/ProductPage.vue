@@ -194,7 +194,6 @@
 <script>
 import axios from "axios";
 import { mapActions } from "vuex";
-import { BASE_API_URL } from "@/config";
 
 import ProductAboutTab from "@/components/productPageComponents/ProductAboutTab";
 import ProductSpecTab from "@/components/productPageComponents/ProductSpecTab";
@@ -256,6 +255,7 @@ export default {
         return this.isProductAddLoading ? "Подождите..." : "Добавить";
       }
     },
+
     infoMessageText() {
       if (this.isProductAddFailed) {
         return "Не удалсь добавить товар, повторите попытку";
@@ -265,6 +265,7 @@ export default {
           : "Товар успешно добавлен";
       }
     },
+
     isPopupCanBeShow() {
       return (
         this.isProductAddFailed ||
@@ -279,27 +280,28 @@ export default {
       addProduct: "addProduct",
     }),
 
-    addProductToCart() {
+    async addProductToCart() {
       this.isProductAddLoading = true;
       this.isProductAddToCart = false;
       this.isProductAddFailed = false;
 
-      this.addProduct({
-        productId: this.product.id,
-        amount: this.checkedQuantity,
-        colorId: this.checkedColorId,
-      })
-        .then(() => {
-          this.isProductAddToCart = true;
-          this.isProductAddLoading = false;
-        })
-        .catch(() => (this.isProductAddFailed = true))
-        .finally(() => {
-          this.isProductAddLoading = false;
-          this.isProductAddToCart
-            ? setTimeout(() => (this.isProductAddToCart = false), 2000)
-            : false;
+      try {
+        await this.addProduct({
+          productId: this.product.id,
+          amount: this.checkedQuantity,
+          colorId: this.checkedColorId,
         });
+
+        this.isProductAddToCart = true;
+        this.isProductAddLoading = false;
+      } catch {
+        this.isProductAddFailed = true;
+      }
+
+      this.isProductAddLoading = false;
+      this.isProductAddToCart
+        ? setTimeout(() => (this.isProductAddToCart = false), 2000)
+        : false;
     },
 
     loadProduct() {
@@ -307,7 +309,7 @@ export default {
       this.isProductLoadFailed = false;
 
       return axios
-        .get(BASE_API_URL + "products/" + this.$route.params.id)
+        .get("products/" + this.$route.params.id)
         .then(
           (response) =>
             (this.productData = {

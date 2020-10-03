@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { BASE_API_URL } from '@/config';
 import axios from 'axios';
 
 Vue.use(Vuex)
@@ -81,7 +80,7 @@ const store = new Vuex.Store({
 
   actions: {
     loadCart({ state, commit }) {
-      return axios.get(BASE_API_URL + 'baskets', {
+      return axios.get('baskets', {
         params: {
           userAccessKey: state.userAccessKey
         }
@@ -99,7 +98,7 @@ const store = new Vuex.Store({
 
     addProduct({ state, commit }, { productId, amount, colorId }) {
       return axios
-        .post(BASE_API_URL + 'baskets/products', {
+        .post('baskets/products', {
           productId,
           quantity: amount
         }, {
@@ -128,7 +127,7 @@ const store = new Vuex.Store({
       }
 
       return axios
-        .put(BASE_API_URL + 'baskets/products', {
+        .put('baskets/products', {
           productId,
           quantity: amount
         }, {
@@ -147,7 +146,7 @@ const store = new Vuex.Store({
 
       return axios
         .request({
-          url: BASE_API_URL + 'baskets/products',
+          url: 'baskets/products',
           method: 'DELETE',
           params: {
             userAccessKey: state.userAccessKey,

@@ -34,7 +34,6 @@
 <script>
 import Vue from "vue";
 import axios from "axios";
-import { BASE_API_URL } from "@/config.js";
 
 import ProductList from "@/components/mainPageComponents/ProductList";
 import BasePagination from "@/components/BasePagination";
@@ -110,7 +109,7 @@ export default {
       // setTimeOut is used here to send just one request with all data
       this.loadProductsTimer = setTimeout(() => {
         return axios
-          .get(`${BASE_API_URL}products`, {
+          .get("products", {
             params: {
               page: this.page,
               limit: this.productsPerPage,
