@@ -1,5 +1,5 @@
 <template>
-  <li class="cart__item product">
+  <li class="cart__item product" v-if="!isInPopup">
     <router-link
       :to="{ name: 'product', params: { id: item.productId } }"
       class="product__pic"
@@ -33,14 +33,41 @@
     >
 
     <button
-      class="product__del button-del"
+      :class="[
+        'product__del',
+        'button-del',
+        { 'delete-waiting': isProductDeleteInProccess },
+      ]"
       type="button"
       aria-label="Удалить товар из корзины"
+      :disabled="isProductDeleteInProccess"
       @click="deleteProduct(item.productId)"
     >
-      {{ isProductDeleteInProccess ? "sd" : "&#10060;" }}
+      {{ isProductDeleteInProccess ? "&#8635;" : "&#10060;" }}
     </button>
   </li>
+
+  <!-- In popup view -->
+  <router-link
+    v-else
+    tag="li"
+    class="cart__item cart__item--popup product"
+    :to="{ name: 'product', params: { id: item.productId } }"
+  >
+    <img
+      :src="item.product.image"
+      width="40"
+      height="40"
+      :alt="item.product.title"
+    />
+    <div class="popup-description">
+      <h3 class="product__title product__title--popup">
+        {{ textConvertToShort(item.product.title) }}
+      </h3>
+
+      <span class="product__code">Артикул: {{ item.productId }}</span>
+    </div>
+  </router-link>
 </template>
 
 <script>
@@ -54,6 +81,11 @@ export default {
     item: {
       type: Object,
       required: true,
+    },
+    isInPopup: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
@@ -99,3 +131,32 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.popup-description {
+  margin-left: 10px;
+}
+.product__title--popup {
+  margin: 0;
+  font-size: 14px;
+}
+
+.cart__item--popup {
+  margin-bottom: 15px;
+  cursor: pointer;
+  justify-content: flex-start;
+}
+
+.delete-waiting {
+  cursor: progress;
+  animation: around 1s linear infinite;
+}
+@keyframes around {
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>

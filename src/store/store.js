@@ -10,7 +10,9 @@ const store = new Vuex.Store({
     cartProducts: [],
 
     userAccessKey: null,
-    cartProductsData: null
+    cartProductsData: null,
+
+    isCartPopupVisible: false
   },
 
   getters: {
@@ -36,6 +38,8 @@ const store = new Vuex.Store({
         0
       );
     },
+
+    cartPopupVisibleStatus: (state) => state.isCartPopupVisible
   },
 
   mutations: {
@@ -69,45 +73,55 @@ const store = new Vuex.Store({
           colorId
         }
       })
+    },
+    CHANGE_CARTPOPUP_VISIBLE(state) {
+      state.isCartPopupVisible = !state.isCartPopupVisible
     }
   },
 
   actions: {
-    loadCart(context) {
+    loadCart({ state, commit }) {
       return axios.get(BASE_API_URL + 'baskets', {
         params: {
-          userAccessKey: context.state.userAccessKey
+          userAccessKey: state.userAccessKey
         }
       })
         .then((response) => {
-          if (!context.state.userAccessKey) {
+          if (!state.userAccessKey) {
             localStorage.setItem('userAccessKey', response.data.user.accessKey);
-            context.commit('UPDATE_USER_ACCESSKEY', response.data.user.accessKey);
+            commit('UPDATE_USER_ACCESSKEY', response.data.user.accessKey);
           }
 
-          context.commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
-          context.commit('SYNC_CARTPRODUCTS');
+          commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
+          commit('SYNC_CARTPRODUCTS');
         })
     },
 
-    addProduct(context, { productId, amount, colorId }) {
+    addProduct({ state, commit }, { productId, amount, colorId }) {
       return axios
         .post(BASE_API_URL + 'baskets/products', {
           productId,
           quantity: amount
         }, {
           params: {
-            userAccessKey: context.state.userAccessKey
+            userAccessKey: state.userAccessKey
           }
         })
         .then(response => {
-          context.commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
-          context.commit('SYNC_CARTPRODUCTS', colorId);
+          commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
+          commit('SYNC_CARTPRODUCTS', colorId);
+          commit('CHANGE_CARTPOPUP_VISIBLE');
+          setTimeout(() => {
+            if (state.isCartPopupVisible) {
+              commit('CHANGE_CARTPOPUP_VISIBLE');
+            }
+          }, 5000)
+
         })
     },
 
-    updateCartProductAmount(context, { productId, amount }) {
-      context.commit('UPDATE_PRODUCT_AMOUNT', { productId, amount })
+    updateCartProductAmount({ state, commit }, { productId, amount }) {
+      commit('UPDATE_PRODUCT_AMOUNT', { productId, amount })
 
       if (amount < 1) {
         return
@@ -119,33 +133,33 @@ const store = new Vuex.Store({
           quantity: amount
         }, {
           params: {
-            userAccessKey: context.state.userAccessKey
+            userAccessKey: state.userAccessKey
           }
         })
         .then(response => {
-          context.commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
+          commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
         })
-        .catch(() => context.commit('SYNC_CARTPRODUCTS'))
+        .catch(() => commit('SYNC_CARTPRODUCTS'))
     },
 
-    deleteProductFromCart(context, productId) {
-      context.commit('DELETE_CART_PRODUCT', productId)
+    deleteProductFromCart({ state, commit }, productId) {
+      commit('DELETE_CART_PRODUCT', productId)
 
       return axios
         .request({
           url: BASE_API_URL + 'baskets/products',
           method: 'DELETE',
           params: {
-            userAccessKey: context.state.userAccessKey,
+            userAccessKey: state.userAccessKey,
           },
           data: {
             productId
           }
         })
         .then(response => {
-          context.commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
+          commit('UPDATE_CARTPRODUCTS_DATA', response.data.items);
         })
-        .catch(() => context.commit('SYNC_CARTPRODUCTS'))
+        .catch(() => commit('SYNC_CARTPRODUCTS'))
     }
   }
 });

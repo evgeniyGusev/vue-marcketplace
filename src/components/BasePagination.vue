@@ -1,32 +1,37 @@
 <template>
-  <ul class="catalog__pagination pagination">
+  <ul class="content__pagination pagination">
     <li class="pagination__item">
       <button
         class="pagination__link pagination__link--arrow"
-        :class="{'pagination__link--disabled': page === 1}"
+        :class="{ 'pagination__link--disabled': page === 1 }"
         aria-label="Предыдущая страница"
         :disabled="page === 1"
         @click.prevent="paginate(page - 1)"
-      >&#8249;</button>
+      >
+        &#8249;
+      </button>
     </li>
 
     <li class="pagination__item" v-for="pageNumber in pages" :key="pageNumber">
       <a
         class="pagination__link"
-        :class="{'pagination__link--current': pageNumber === page}"
+        :class="{ 'pagination__link--current': pageNumber === page }"
         href="#"
         @click.prevent="paginate(pageNumber)"
-      >{{pageNumber}}</a>
+        >{{ pageNumber }}</a
+      >
     </li>
 
     <li class="pagination__item">
       <button
         class="pagination__link pagination__link--arrow"
-        :class="{'pagination__link--disabled': page === pages}"
+        :class="{ 'pagination__link--disabled': page === pages }"
         aria-label="Следующая страница"
         :disabled="page === pages"
         @click.prevent="paginate(page + 1)"
-      >&#8250;</button>
+      >
+        &#8250;
+      </button>
     </li>
   </ul>
 </template>
@@ -85,7 +90,7 @@ export default {
   -ms-flex-pack: center;
   justify-content: center;
 }
-.catalog__pagination {
+.content__pagination {
   margin-top: auto;
 }
 .pagination__link--disabled {

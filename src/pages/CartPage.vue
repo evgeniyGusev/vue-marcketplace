@@ -4,7 +4,7 @@
   </main>
 
   <main v-else class="content container">
-    <div class="content__top">
+    <div class="content__head">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
           <router-link class="breadcrumbs__link" :to="{ name: 'main' }"

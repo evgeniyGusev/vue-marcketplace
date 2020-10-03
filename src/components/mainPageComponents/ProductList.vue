@@ -1,5 +1,5 @@
 <template>
-  <ul class="catalog__list">
+  <ul class="content__list">
     <ProductItem
       v-for="product in products"
       :key="product.id"
@@ -26,7 +26,7 @@ export default {
 </script>
 
 <style>
-.catalog__list {
+.content__list {
   padding: 0;
   list-style: none;
   display: grid;

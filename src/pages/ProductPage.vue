@@ -1,47 +1,46 @@
 <template>
-  <fragment>
-    <main class="content container" v-if="isProductLoading">
-      <BaseLoaderSpinner />
-    </main>
+  <main class="content container" v-if="isProductLoading">
+    <BaseLoaderSpinner />
+  </main>
 
-    <main class="content container" v-else-if="isProductLoadFailed">
-      <div>
-        Не удалось загрузить товар...
-        <button @click="loadProduct">Попробовать снова</button>
+  <main class="content container" v-else-if="isProductLoadFailed">
+    <div>
+      Не удалось загрузить товар...
+      <button @click="loadProduct">Попробовать снова</button>
+    </div>
+  </main>
+
+  <main class="container" v-else>
+    <div>
+      <div class="content__head">
+        <ul class="breadcrumbs">
+          <li class="breadcrumbs__item">
+            <router-link class="breadcrumbs__link" :to="{ name: 'main' }"
+              >Каталог</router-link
+            >
+          </li>
+          <li class="breadcrumbs__item">
+            <router-link class="breadcrumbs__link" :to="{ name: 'main' }">{{
+              category.title
+            }}</router-link>
+          </li>
+          <li class="breadcrumbs__item">
+            <a class="breadcrumbs__link">{{ product.title }}</a>
+          </li>
+        </ul>
       </div>
-    </main>
 
-    <main class="content container" v-else>
-      <div>
-        <div class="content__top">
-          <ul class="breadcrumbs">
-            <li class="breadcrumbs__item">
-              <router-link class="breadcrumbs__link" :to="{ name: 'main' }"
-                >Каталог</router-link
-              >
-            </li>
-            <li class="breadcrumbs__item">
-              <router-link class="breadcrumbs__link" :to="{ name: 'main' }">{{
-                category.title
-              }}</router-link>
-            </li>
-            <li class="breadcrumbs__item">
-              <a class="breadcrumbs__link">{{ product.title }}</a>
-            </li>
-          </ul>
-        </div>
-
-        <section class="item">
-          <div class="item__pics pics">
-            <div class="pics__wrapper">
-              <img
-                width="570"
-                height="570"
-                :src="product.image"
-                :alt="product.title"
-              />
-            </div>
-            <!-- <ul class="pics__list">
+      <section class="item">
+        <div class="item__pics pics">
+          <div class="pics__wrapper">
+            <img
+              width="570"
+              height="570"
+              :src="product.image"
+              :alt="product.title"
+            />
+          </div>
+          <!-- <ul class="pics__list">
           <li class="pics__item">
             <a href class="pics__link pics__link--current">
               <img
@@ -87,25 +86,25 @@
             </a>
           </li>
           </ul>-->
-          </div>
+        </div>
 
-          <div class="item__info">
-            <span class="item__code">Артикул: {{ product.id }}</span>
-            <h2 class="item__title">{{ product.title }}</h2>
-            <div class="item__form">
-              <form class="form" @submit.prevent="addProductToCart">
-                <b class="item__price">{{ numberFormat(product.price) }} ₽</b>
+        <div class="item__info">
+          <span class="item__code">Артикул: {{ product.id }}</span>
+          <h2 class="item__title">{{ product.title }}</h2>
+          <div class="item__form">
+            <form class="form" @submit.prevent="addProductToCart">
+              <b class="item__price">{{ numberFormat(product.price) }} ₽</b>
 
-                <fieldset class="form__block">
-                  <legend class="form__legend">Цвет:</legend>
+              <fieldset class="form__block">
+                <legend class="form__legend">Цвет:</legend>
 
-                  <BaseColorList
-                    :colors="product.colors"
-                    :colorId.sync="checkedColorId"
-                  />
-                </fieldset>
+                <BaseColorList
+                  :colors="product.colors"
+                  :colorId.sync="checkedColorId"
+                />
+              </fieldset>
 
-                <!-- <fieldset class="form__block" v-if="product.memorySizes">
+              <!-- <fieldset class="form__block" v-if="product.memorySizes">
                 <legend class="form__legend">Объемб в ГБ:</legend>
                 <ul class="sizes sizes--primery">
                   <li
@@ -129,58 +128,67 @@
                 </ul>
               </fieldset> -->
 
-                <div class="item__row">
-                  <BaseProductCounter
-                    :amount.sync="checkedQuantity"
-                    :maxCount="product.inStock"
-                    class="form__counter"
-                  />
+              <div class="item__row">
+                <BaseProductCounter
+                  :amount.sync="checkedQuantity"
+                  :maxCount="product.inStock"
+                  class="form__counter"
+                />
 
-                  <button
-                    class="button button--primery"
-                    type="submit"
-                    :disabled="isProductAddLoading"
-                  >
-                    {{ buttonText }}
-                  </button>
-
-                  <div v-show="isProductAddLoading">Добавляем товар...</div>
-                  <div v-show="isProductAddToCart">Товар добавлен</div>
-                  <div v-show="isProductAddFailed">
-                    Не удалось добавить товар. Повторите попытку
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div class="item__desc">
-            <ul class="tabs">
-              <li class="tabs__item" v-for="tab of tabs" :key="tab.id">
-                <a
-                  :class="[
-                    'tabs__link',
-                    { 'tabs__link--current': activeTab === tab.tab },
-                  ]"
-                  href="#"
-                  @click.prevent="activeTab = tab.tab"
-                  >{{ tab.title }}</a
+                <button
+                  class="button button--primery button--add"
+                  type="submit"
+                  :disabled="isProductAddLoading"
                 >
-              </li>
-            </ul>
+                  {{ buttonText }}
+                </button>
 
-            <div class="item__content">
-              <component
-                :is="activeTab"
-                :product="product"
-                @change-tab="(value) => (activeTab = value)"
-              />
-            </div>
+                <transition name="fade">
+                  <span
+                    :class="[
+                      'info-message',
+                      {
+                        'info-message--err': isProductAddFailed,
+                        'info-message--warn': isProductAddLoading,
+                        'info-message--ok': isProductAddToCart,
+                      },
+                    ]"
+                    v-show="isPopupCanBeShow"
+                  >
+                    {{ infoMessageText }}
+                  </span>
+                </transition>
+              </div>
+            </form>
           </div>
-        </section>
-      </div>
-    </main>
-  </fragment>
+        </div>
+
+        <div class="item__desc">
+          <ul class="tabs">
+            <li class="tabs__item" v-for="tab of tabs" :key="tab.id">
+              <a
+                :class="[
+                  'tabs__link',
+                  { 'tabs__link--current': activeTab === tab.tab },
+                ]"
+                href="#"
+                @click.prevent="activeTab = tab.tab"
+                >{{ tab.title }}</a
+              >
+            </li>
+          </ul>
+
+          <div class="item__content">
+            <component
+              :is="activeTab"
+              :product="product"
+              @change-tab="(value) => (activeTab = value)"
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 </template>
 
 <script>
@@ -248,6 +256,22 @@ export default {
         return this.isProductAddLoading ? "Подождите..." : "Добавить";
       }
     },
+    infoMessageText() {
+      if (this.isProductAddFailed) {
+        return "Не удалсь добавить товар, повторите попытку";
+      } else {
+        return this.isProductAddLoading
+          ? "Добавляем товар..."
+          : "Товар успешно добавлен";
+      }
+    },
+    isPopupCanBeShow() {
+      return (
+        this.isProductAddFailed ||
+        this.isProductAddLoading ||
+        this.isProductAddToCart
+      );
+    },
   },
 
   methods: {
@@ -260,24 +284,22 @@ export default {
       this.isProductAddToCart = false;
       this.isProductAddFailed = false;
 
-      setTimeout(() => {
-        this.addProduct({
-          productId: this.product.id,
-          amount: this.checkedQuantity,
-          colorId: this.checkedColorId,
+      this.addProduct({
+        productId: this.product.id,
+        amount: this.checkedQuantity,
+        colorId: this.checkedColorId,
+      })
+        .then(() => {
+          this.isProductAddToCart = true;
+          this.isProductAddLoading = false;
         })
-          .then(() => {
-            this.isProductAddToCart = true;
-            this.isProductAddLoading = false;
-          })
-          .catch(() => (this.isProductAddFailed = true))
-          .finally(() => {
-            this.isProductAddLoading = false;
-            this.isProductAddToCart
-              ? setTimeout(() => (this.isProductAddToCart = false), 2000)
-              : false;
-          });
-      }, 5000);
+        .catch(() => (this.isProductAddFailed = true))
+        .finally(() => {
+          this.isProductAddLoading = false;
+          this.isProductAddToCart
+            ? setTimeout(() => (this.isProductAddToCart = false), 2000)
+            : false;
+        });
     },
 
     loadProduct() {
@@ -335,14 +357,38 @@ export default {
 </script>
 
 <style>
-.numcontroll-btn {
-  cursor: pointer;
+.button--add {
+  padding: 20px 70px;
 }
+
+.info-message {
+  padding: 10px;
+  max-width: 300px;
+  position: absolute;
+  right: 0;
+  top: -70px;
+  border-radius: 5px;
+  letter-spacing: 1px;
+
+  color: #fff;
+  font-weight: 700;
+}
+.info-message--err {
+  background-color: #e63127;
+}
+.info-message--warn {
+  background-color: #fcba03;
+}
+.info-message--ok {
+  background-color: #1aab62;
+}
+
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 0.25s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
