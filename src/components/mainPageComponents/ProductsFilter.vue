@@ -2,103 +2,94 @@
   <section class="filter">
     <div class="filter__head">
       <h2 class="filter__title">Фильтры</h2>
-      <button class="filter__show-controll" @click.prevent="openFilters">
-        {{ isSmFiltersOpen ? "&#9206;" : "&#9207;" }}
-      </button>
     </div>
 
-    <transition name="fade">
-      <form
-        class="filter__form form"
-        action="#"
-        method="get"
-        @submit.prevent="filterSubmit()"
-      >
-        <fieldset class="form__block filter__form-block">
-          <legend class="form__legend">Цена</legend>
-          <label class="form__label form__label--price">
-            <input
-              class="form__input"
+    <form
+      class="filter__form form"
+      action="#"
+      method="get"
+      @submit.prevent="filterSubmit()"
+    >
+      <fieldset class="form__block filter__form-block">
+        <legend class="form__legend">Цена</legend>
+        <label class="form__label form__label--price">
+          <input
+            class="form__input"
+            type="text"
+            name="min-price"
+            v-model.number="currentPriceFrom"
+          />
+          <span class="form__value">От</span>
+        </label>
+        <label class="form__label form__label--price">
+          <input
+            class="form__input"
+            type="text"
+            name="max-price"
+            v-model.number="currentPriceTo"
+          />
+          <span class="form__value">До</span>
+        </label>
+      </fieldset>
+
+      <div>
+        <fieldset class="form__block">
+          <legend class="form__legend">Категория</legend>
+
+          <div v-if="isLoadFailed.categoriesData">
+            Не удалось загрузить категории <br />
+            <button
+              @click="loadFilterData('categoriesData', 'productCategories')"
+            >
+              Попробовать еще раз
+            </button>
+          </div>
+
+          <label class="form__label form__label--select" v-else>
+            <select
+              class="form__select"
               type="text"
-              name="min-price"
-              v-model.number="currentPriceFrom"
-            />
-            <span class="form__value">От</span>
-          </label>
-          <label class="form__label form__label--price">
-            <input
-              class="form__input"
-              type="text"
-              name="max-price"
-              v-model.number="currentPriceTo"
-            />
-            <span class="form__value">До</span>
+              name="category"
+              v-model.number="currentCategoryId"
+            >
+              <option value="0">Все категории</option>
+              <option
+                v-for="category in categories"
+                :value="category.id"
+                :key="category.id"
+              >
+                {{ category.title }}
+              </option>
+            </select>
           </label>
         </fieldset>
 
-        <div>
-          <fieldset class="form__block">
-            <legend class="form__legend">Категория</legend>
+        <fieldset class="form__block">
+          <legend class="form__legend">Цвет</legend>
+          <div v-if="isLoadFailed.colorsData">
+            Не удалось загрузить цвета <br />
+            <button @click="loadFilterData('colorsData', 'colors')">
+              Попробовать еще раз
+            </button>
+          </div>
 
-            <div v-if="isLoadFailed.categoriesData">
-              Не удалось загрузить категории <br />
-              <button
-                @click="loadFilterData('categoriesData', 'productCategories')"
-              >
-                Попробовать еще раз
-              </button>
-            </div>
+          <BaseColorList :colors="colors" :colorId.sync="currentColor" v-else />
+        </fieldset>
+      </div>
 
-            <label class="form__label form__label--select" v-else>
-              <select
-                class="form__select"
-                type="text"
-                name="category"
-                v-model.number="currentCategoryId"
-              >
-                <option value="0">Все категории</option>
-                <option
-                  v-for="category in categories"
-                  :value="category.id"
-                  :key="category.id"
-                >
-                  {{ category.title }}
-                </option>
-              </select>
-            </label>
-          </fieldset>
-
-          <fieldset class="form__block">
-            <legend class="form__legend">Цвет</legend>
-            <div v-if="isLoadFailed.colorsData">
-              Не удалось загрузить цвета <br />
-              <button @click="loadFilterData('colorsData', 'colors')">
-                Попробовать еще раз
-              </button>
-            </div>
-
-            <BaseColorList
-              :colors="colors"
-              :colorId.sync="currentColor"
-              v-else
-            />
-          </fieldset>
-        </div>
-
-        <input
-          class="filter__submit button button--primery"
-          type="submit"
-          value="Применить"
-        />
-        <button
-          class="filter__reset button button--second"
-          type="button"
-          @click.prevent="filterClear"
-        >
-          Сбросить
-        </button>
-      </form>
-    </transition>
+      <input
+        class="filter__submit button button--primery"
+        type="submit"
+        value="Применить"
+      />
+      <button
+        class="filter__reset button button--second"
+        type="button"
+        @click.prevent="filterClear"
+      >
+        Сбросить
+      </button>
+    </form>
   </section>
 </template>
 
@@ -108,6 +99,7 @@ import axios from "axios";
 
 export default {
   name: "ProductsFilter",
+  components: { BaseColorList },
   props: {
     priceFrom: {
       type: Number,
@@ -130,7 +122,6 @@ export default {
       default: 0,
     },
   },
-  components: { BaseColorList },
 
   data() {
     return {
@@ -160,6 +151,11 @@ export default {
     },
   },
 
+  created() {
+    this.loadFilterData("categoriesData", "productCategories");
+    this.loadFilterData("colorsData", "colors");
+  },
+
   methods: {
     filterSubmit() {
       this.$emit("update:priceFrom", this.currentPriceFrom);
@@ -187,15 +183,6 @@ export default {
         .then((response) => (this[dataKey] = response.data))
         .catch(() => (this.isLoadFailed[dataKey] = true));
     },
-
-    openFilters() {
-      this.isSmFiltersOpen = !this.isSmFiltersOpen;
-    },
-  },
-
-  created() {
-    this.loadFilterData("categoriesData", "productCategories");
-    this.loadFilterData("colorsData", "colors");
   },
 };
 </script>

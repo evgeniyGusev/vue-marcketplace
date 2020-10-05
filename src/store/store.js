@@ -7,7 +7,6 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     cartProducts: [],
-
     userAccessKey: null,
     cartProductsData: null,
 
@@ -37,8 +36,6 @@ const store = new Vuex.Store({
         0
       );
     },
-
-    cartPopupVisibleStatus: (state) => state.isCartPopupVisible
   },
 
   mutations: {
@@ -52,8 +49,8 @@ const store = new Vuex.Store({
       }
     },
 
-    DELETE_CART_PRODUCT(state, productId) {
-      state.cartProducts = state.cartProducts.filter(item => item.productId !== productId);
+    DELETE_CART_PRODUCT(state, payload) {
+      state.cartProducts = payload;
     },
 
     UPDATE_USER_ACCESSKEY(state, accessKey) {
@@ -142,7 +139,9 @@ const store = new Vuex.Store({
     },
 
     deleteProductFromCart({ state, commit }, productId) {
-      commit('DELETE_CART_PRODUCT', productId)
+      const payload = state.cartProducts.filter(item => item.productId !== productId);
+
+      commit('DELETE_CART_PRODUCT', payload)
 
       return axios
         .request({

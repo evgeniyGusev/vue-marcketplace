@@ -1,5 +1,5 @@
 <template >
-  <div v-if="isVisible" class="cart-popup">
+  <div v-if="$store.state.isCartPopupVisible" class="cart-popup">
     <ul>
       <CartItem
         v-for="product in products"
@@ -26,7 +26,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      isVisible: "cartPopupVisibleStatus",
       products: "detailCartProducts",
     }),
   },
